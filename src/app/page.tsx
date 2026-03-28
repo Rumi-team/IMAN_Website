@@ -1,8 +1,26 @@
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
 import GeoDivider from "@/components/GeoDivider";
 import Footer from "@/components/Footer";
+import SectionHeader from "@/components/SectionHeader";
 import { fetchDailyPrayers } from "@/lib/prayer-api";
+
+const videos = [
+  { id: "ZW3Q4dUxjSo", title: "Ey Iran — ای ایران", featured: true },
+  { id: "gW3LaJPDePs", title: "IMAN Community Event" },
+  { id: "_oRsRIP31o4", title: "IMAN Cultural Program" },
+  { id: "DLExzQvCTmI", title: "IMAN Lecture Series" },
+];
+
+const galleryPhotos = [
+  { src: "https://iman.org/wp-content/uploads/2020/04/IMG_8274.jpg", alt: "IMAN interfaith dialogue" },
+  { src: "https://iman.org/wp-content/uploads/2020/04/MG_8435.jpg", alt: "IMAN community gathering" },
+  { src: "https://iman.org/wp-content/uploads/2020/04/MG_8243.jpg", alt: "IMAN cultural event" },
+  { src: "https://iman.org/wp-content/uploads/2020/04/MG_8357.jpg", alt: "IMAN community celebration" },
+  { src: "https://iman.org/wp-content/uploads/2020/04/MG_8152.jpg", alt: "IMAN event program" },
+  { src: "https://iman.org/wp-content/uploads/2020/04/MG_8100_test-2.jpg", alt: "IMAN community members" },
+];
 
 const services = [
   {
@@ -229,6 +247,120 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ===== VIDEOS ===== */}
+      <section className="bg-[var(--surface)] py-24">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+          <SectionHeader
+            overline="Watch"
+            title="From Our Community"
+            titleFa="از جامعه ما"
+          />
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
+            {/* Featured video */}
+            <div className="rounded-lg overflow-hidden shadow-md aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${videos[0].id}`}
+                title={videos[0].title}
+                width="100%"
+                height="100%"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+                loading="lazy"
+              />
+            </div>
+            {/* Side stack */}
+            <div className="flex flex-col gap-5">
+              {videos.slice(1).map((video) => (
+                <div
+                  key={video.id}
+                  className="rounded-lg overflow-hidden shadow-sm aspect-video"
+                >
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.id}`}
+                    title={video.title}
+                    width="100%"
+                    height="100%"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <GeoDivider />
+
+      {/* ===== GALLERY ===== */}
+      <section className="py-24">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+          <SectionHeader
+            overline="Gallery"
+            title="Life at IMAN"
+            titleFa="زندگی در ایمان"
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {galleryPhotos.map((photo) => (
+              <div
+                key={photo.src}
+                className="relative aspect-[4/3] rounded-lg overflow-hidden group"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            ))}
+          </div>
+          {/* Iran map + cultural element */}
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="relative aspect-square max-w-[500px] mx-auto lg:mx-0">
+              <Image
+                src="https://iman.org/wp-content/uploads/2024/08/iran-map.jpg"
+                alt="Illustrated map of Iran showing historic landmarks and mosques"
+                fill
+                sizes="500px"
+                className="object-contain"
+              />
+            </div>
+            <div>
+              <h3 className="font-[family-name:var(--font-display)] text-2xl font-medium text-[var(--text)] mb-2">
+                Bridging Cultures
+              </h3>
+              <p
+                className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)] mb-4"
+                dir="rtl"
+                lang="fa"
+              >
+                پلی میان فرهنگ‌ها
+              </p>
+              <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
+                IMAN connects the rich heritage of Iranian civilization with the vibrant
+                Iranian-American community in Los Angeles. Through cultural events, educational
+                programs, and community gatherings, we preserve our traditions while building
+                bridges across cultures and faiths.
+              </p>
+              <a
+                href="/about"
+                className="inline-block text-sm font-semibold text-[var(--accent)] tracking-wide"
+              >
+                Learn About Our History &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <GeoDivider />
 
       {/* ===== COMMUNITY CTA ===== */}
       <section
