@@ -113,8 +113,10 @@ export default async function PrayerTimesPage() {
               later.
             </p>
           ) : (
+            <>
+            <p className="text-xs text-[var(--muted)] mb-2 lg:hidden">Scroll horizontally to see all times →</p>
             <div className="overflow-x-auto rounded-lg border border-[var(--line-light)]">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[700px]">
                 <thead>
                   <tr className="bg-[var(--accent)] text-white">
                     <th className="px-3 py-3 text-left font-semibold text-xs tracking-wide">
@@ -210,6 +212,7 @@ export default async function PrayerTimesPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
       </section>
