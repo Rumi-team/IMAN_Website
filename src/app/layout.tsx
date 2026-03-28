@@ -45,8 +45,9 @@ export const metadata: Metadata = {
 const darkModeScript = `
 (function(){
   try {
-    var t = localStorage.getItem('iman-theme');
-    if (t === 'dark') document.documentElement.classList.add('dark');
+    var d = new Date(new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+    var m = d.getHours()*60+d.getMinutes();
+    if(m>=1170||m<330) document.documentElement.classList.add('dark');
   } catch(e) {}
 })();
 `;

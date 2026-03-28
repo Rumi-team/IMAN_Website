@@ -1,69 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
+/**
+ * Auto dark mode based on Los Angeles time.
+ * Dark mode activates between 7:30 PM and 5:30 AM LA time.
+ * No visible UI — the theme switches automatically.
+ */
 export default function DarkModeToggle() {
-  const [dark, setDark] = useState(false);
-
   useEffect(() => {
-    const stored = localStorage.getItem("iman-theme");
-    const isDark = stored === "dark";
-    setDark(isDark);
-    document.documentElement.classList.toggle("dark", isDark);
+    function updateTheme() {
+      const laTime = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
+      );
+      const hour = laTime.getHours();
+      const minute = laTime.getMinutes();
+      const totalMinutes = hour * 60 + minute;
+
+      // Dark between 19:30 (7:30 PM) and 05:30 (5:30 AM)
+      const isDark = totalMinutes >= 19 * 60 + 30 || totalMinutes < 5 * 60 + 30;
+      document.documentElement.classList.toggle("dark", isDark);
+    }
+
+    updateTheme();
+    // Re-check every 5 minutes
+    const interval = setInterval(updateTheme, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  function toggle() {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("iman-theme", next ? "dark" : "light");
-  }
-
-  return (
-    <button
-      onClick={toggle}
-      aria-label="Toggle dark mode"
-      className="p-2 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-    >
-      {dark ? (
-        /* Sun icon */
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="5" />
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
-      ) : (
-        /* Moon icon */
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
-      )}
-    </button>
-  );
+  // No visible UI — auto dark mode only
+  return null;
 }

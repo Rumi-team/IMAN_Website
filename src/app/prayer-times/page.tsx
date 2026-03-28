@@ -41,15 +41,22 @@ function getEventForDay(dayName: string): string | null {
 }
 
 export default async function PrayerTimesPage() {
+  // Dynamic: use current month in LA timezone
+  const laDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+  const currentYear = laDate.getFullYear();
+  const currentMonth = laDate.getMonth() + 1; // 1-indexed
+  const currentDay = laDate.getDate();
+  const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
   const [dailyData, monthlyDataRaw] = await Promise.all([
     fetchDailyPrayers(),
-    fetchMonthlyPrayers(2026, 3).catch(() => [] as MonthlyPrayerDay[]),
+    fetchMonthlyPrayers(currentYear, currentMonth).catch(() => [] as MonthlyPrayerDay[]),
   ]);
 
   // Transform MonthlyPrayerDay[] into flat rows for the table
   const monthlyRows = monthlyDataRaw.map((row) => {
     const dayNum = parseInt(row.day, 10);
-    const dateObj = new Date(2026, 2, dayNum); // March = month 2
+    const dateObj = new Date(currentYear, currentMonth - 1, dayNum);
     const dayName = DAY_NAMES[dateObj.getDay()];
 
     // Extract individual prayer times from the prayers array
@@ -70,8 +77,7 @@ export default async function PrayerTimesPage() {
     };
   });
 
-  // Current day for highlighting (March 27)
-  const today = 27;
+  const today = currentDay;
 
   return (
     <>
@@ -103,7 +109,7 @@ export default async function PrayerTimesPage() {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Monthly Calendar"
-            title="March 2026 Prayer Times"
+            title={`${monthNames[currentMonth]} ${currentYear} Prayer Times`}
             titleFa="تقویم ماهانه"
           />
 
@@ -179,7 +185,7 @@ export default async function PrayerTimesPage() {
                           </span>
                         </td>
                         <td className="px-3 py-2.5 text-[var(--text-secondary)]">
-                          Mar {row.day}
+                          {monthNames[currentMonth].slice(0, 3)} {row.day}
                         </td>
                         <td className="px-3 py-2.5 text-center tabular-nums text-[var(--text)]">
                           {row.fajr}
