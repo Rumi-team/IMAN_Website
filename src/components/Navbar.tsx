@@ -55,17 +55,17 @@ export default function Navbar() {
           <li key={item.en} className="text-center">
             <Link
               href={item.href}
-              className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors tracking-wide"
+              className="block py-2 px-1 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors tracking-wide"
             >
               {item.en}
+              <span
+                className="block font-[family-name:var(--font-farsi)] text-xs text-[var(--muted)] -mt-0.5"
+                dir="rtl"
+                lang="fa"
+              >
+                {item.fa}
+              </span>
             </Link>
-            <span
-              className="block font-[family-name:var(--font-farsi)] text-[0.65rem] text-[var(--muted)] -mt-0.5"
-              dir="rtl"
-              lang="fa"
-            >
-              {item.fa}
-            </span>
           </li>
         ))}
         <li>
