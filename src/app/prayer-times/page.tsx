@@ -83,13 +83,14 @@ export default async function PrayerTimesPage() {
 
       {/* ===== TODAY ===== */}
       <section className="py-24">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 flex flex-col items-center">
           <SectionHeader
             overline="Today"
             title="Daily Prayer Times"
             titleFa="اوقات شرعی امروز"
+            className="text-center"
           />
-          <div className="max-w-[420px]">
+          <div className="w-full max-w-[480px]">
             <PrayerCard prayers={dailyData.prayers} date={dailyData.date} calendarHref="#monthly-calendar" />
           </div>
         </div>
