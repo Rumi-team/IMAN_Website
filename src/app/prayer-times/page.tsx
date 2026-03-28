@@ -90,7 +90,7 @@ export default async function PrayerTimesPage() {
             titleFa="اوقات شرعی امروز"
           />
           <div className="max-w-[420px]">
-            <PrayerCard prayers={dailyData.prayers} date={dailyData.date} />
+            <PrayerCard prayers={dailyData.prayers} date={dailyData.date} calendarHref="#monthly-calendar" />
           </div>
         </div>
       </section>
@@ -98,7 +98,7 @@ export default async function PrayerTimesPage() {
       <GeoDivider />
 
       {/* ===== MONTHLY CALENDAR ===== */}
-      <section className="bg-[var(--surface)] py-24">
+      <section id="monthly-calendar" className="bg-[var(--surface)] py-24 scroll-mt-8">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Monthly Calendar"

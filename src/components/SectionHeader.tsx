@@ -20,7 +20,7 @@ export default function SectionHeader({
         {title}
       </h2>
       <p
-        className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)]"
+        className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)] text-left"
         dir="rtl"
         lang="fa"
       >

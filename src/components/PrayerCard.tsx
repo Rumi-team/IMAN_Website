@@ -4,9 +4,10 @@ interface PrayerCardProps {
   prayers: Prayer[];
   date: PrayerDate;
   nextPrayer?: string;
+  calendarHref?: string;
 }
 
-export default function PrayerCard({ prayers, date, nextPrayer }: PrayerCardProps) {
+export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "/prayer-times" }: PrayerCardProps) {
   return (
     <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-6 shadow-lg relative overflow-hidden">
       {/* Top gradient border */}
@@ -89,7 +90,7 @@ export default function PrayerCard({ prayers, date, nextPrayer }: PrayerCardProp
           </span>
         )}
         <a
-          href="/prayer-times"
+          href={calendarHref}
           className="text-xs text-[var(--accent)] font-medium hover:underline ml-auto"
         >
           Monthly Calendar &rarr;
