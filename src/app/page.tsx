@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
 import GeoDivider from "@/components/GeoDivider";
 import Footer from "@/components/Footer";
+import { fetchDailyPrayers } from "@/lib/prayer-api";
 
 const services = [
   {
@@ -63,7 +64,9 @@ const stats = [
   { number: "2", label: "Languages" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const { prayers, date } = await fetchDailyPrayers();
+
   return (
     <>
       <Navbar />
@@ -114,7 +117,7 @@ export default function Home() {
             </div>
 
             {/* Prayer Card */}
-            <PrayerCard />
+            <PrayerCard prayers={prayers} date={date} />
           </div>
         </div>
       </section>

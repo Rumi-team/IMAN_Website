@@ -1,4 +1,8 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import DarkModeToggle from "./DarkModeToggle";
 
 const navItems = [
   { en: "About", fa: "\u062F\u0631\u0628\u0627\u0631\u0647 \u0645\u0627", href: "/about" },
@@ -9,6 +13,24 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const close = useCallback(() => setMobileOpen(false), []);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") close();
+    }
+    if (mobileOpen) {
+      document.addEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen, close]);
+
   return (
     <nav className="flex items-center justify-between px-6 lg:px-10 py-4 border-b border-[var(--line-light)] bg-[var(--surface)]">
       <div className="flex items-baseline gap-3">
@@ -21,11 +43,13 @@ export default function Navbar() {
         <span
           className="font-[family-name:var(--font-nastaliq)] text-base text-[var(--gold)]"
           dir="rtl"
+          lang="fa"
         >
-          \u0627\u06CC\u0645\u0627\u0646
+          ایمان
         </span>
       </div>
 
+      {/* Desktop nav */}
       <ul className="hidden lg:flex items-center gap-8">
         {navItems.map((item) => (
           <li key={item.en} className="text-center">
@@ -38,6 +62,7 @@ export default function Navbar() {
             <span
               className="block font-[family-name:var(--font-farsi)] text-[0.65rem] text-[var(--muted)] -mt-0.5"
               dir="rtl"
+              lang="fa"
             >
               {item.fa}
             </span>
@@ -51,7 +76,108 @@ export default function Navbar() {
             Donate
           </Link>
         </li>
+        <li>
+          <DarkModeToggle />
+        </li>
       </ul>
+
+      {/* Hamburger button — visible below lg */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="lg:hidden p-2 text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+        aria-label="Open navigation menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={close}
+            aria-hidden="true"
+          />
+
+          {/* Drawer */}
+          <div className="absolute top-0 right-0 w-[280px] h-full bg-[var(--surface)] shadow-xl flex flex-col">
+            {/* Close button */}
+            <div className="flex justify-end p-4">
+              <button
+                onClick={close}
+                className="p-2 text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+                aria-label="Close navigation menu"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Nav items */}
+            <ul className="flex flex-col gap-1 px-6">
+              {navItems.map((item) => (
+                <li key={item.en}>
+                  <Link
+                    href={item.href}
+                    onClick={close}
+                    className="flex items-center justify-between py-3 border-b border-[var(--line-light)] text-sm font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+                  >
+                    <span>{item.en}</span>
+                    <span
+                      className="font-[family-name:var(--font-farsi)] text-xs text-[var(--muted)]"
+                      dir="rtl"
+                      lang="fa"
+                    >
+                      {item.fa}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Donate + dark mode */}
+            <div className="mt-auto px-6 pb-8 flex flex-col gap-4">
+              <Link
+                href="/donate"
+                onClick={close}
+                className="block text-center bg-[var(--gold)] text-white px-5 py-3 rounded text-sm font-semibold hover:bg-[var(--gold-light)] transition-colors"
+              >
+                Donate
+              </Link>
+              <div className="flex justify-center">
+                <DarkModeToggle />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

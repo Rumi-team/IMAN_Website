@@ -1,13 +1,12 @@
-const prayers = [
-  { en: "Fajr", fa: "\u0627\u0630\u0627\u0646 \u0635\u0628\u062D", time: "5:27 AM" },
-  { en: "Sunrise", fa: "\u0637\u0644\u0648\u0639 \u0622\u0641\u062A\u0627\u0628", time: "6:41 AM" },
-  { en: "Dhuhr", fa: "\u0627\u0630\u0627\u0646 \u0638\u0647\u0631", time: "12:57 PM" },
-  { en: "Asr", fa: "\u0646\u0645\u0627\u0632 \u0639\u0635\u0631", time: "4:30 PM" },
-  { en: "Maghrib", fa: "\u0627\u0630\u0627\u0646 \u0645\u063A\u0631\u0628", time: "7:29 PM", active: true },
-  { en: "Isha", fa: "\u0646\u0645\u0627\u0632 \u0639\u0634\u0627", time: "8:18 PM" },
-];
+import type { Prayer, PrayerDate } from "@/lib/types";
 
-export default function PrayerCard() {
+interface PrayerCardProps {
+  prayers: Prayer[];
+  date: PrayerDate;
+  nextPrayer?: string;
+}
+
+export default function PrayerCard({ prayers, date, nextPrayer }: PrayerCardProps) {
   return (
     <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-6 shadow-lg relative overflow-hidden">
       {/* Top gradient border */}
@@ -20,17 +19,22 @@ export default function PrayerCard() {
         </h3>
         <div className="text-right text-sm">
           <span className="text-[var(--text-secondary)]">
-            Thursday, Mar 27, 2026
+            {date.gregorian}
           </span>
-          <span
-            className="block font-[family-name:var(--font-farsi)] text-[var(--gold)] text-xs mt-0.5"
-            dir="rtl"
-          >
-            ۷ فروردین ۱۴۰۵
-          </span>
-          <span className="block text-[var(--muted)] text-xs mt-0.5">
-            8 Shawwal 1447
-          </span>
+          {date.shamsi && (
+            <span
+              className="block font-[family-name:var(--font-farsi)] text-[var(--gold)] text-xs mt-0.5"
+              dir="rtl"
+              lang="fa"
+            >
+              {date.shamsi}
+            </span>
+          )}
+          {date.hijri && (
+            <span className="block text-[var(--muted)] text-xs mt-0.5">
+              {date.hijri}
+            </span>
+          )}
         </div>
       </div>
 
@@ -69,6 +73,7 @@ export default function PrayerCard() {
             <span
               className="font-[family-name:var(--font-farsi)] text-sm text-[var(--text-secondary)] text-right"
               dir="rtl"
+              lang="fa"
             >
               {prayer.fa}
             </span>
@@ -78,12 +83,14 @@ export default function PrayerCard() {
 
       {/* Footer */}
       <div className="flex justify-between items-center mt-5 pt-4 border-t border-[var(--line-light)]">
-        <span className="text-xs text-[var(--text-secondary)]">
-          Next: <strong className="text-[var(--gold)] font-semibold">Isha in 1h 49m</strong>
-        </span>
+        {nextPrayer && (
+          <span className="text-xs text-[var(--text-secondary)]">
+            Next: <strong className="text-[var(--gold)] font-semibold">{nextPrayer}</strong>
+          </span>
+        )}
         <a
           href="/prayer-times"
-          className="text-xs text-[var(--accent)] font-medium hover:underline"
+          className="text-xs text-[var(--accent)] font-medium hover:underline ml-auto"
         >
           Monthly Calendar &rarr;
         </a>
