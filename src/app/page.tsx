@@ -7,22 +7,22 @@ import { fetchDailyPrayers } from "@/lib/prayer-api";
 const services = [
   {
     en: "Weekly Classes",
-    fa: "\u06A9\u0644\u0627\u0633\u200C\u0647\u0627\u06CC \u0647\u0641\u062A\u06AF\u06CC",
+    fa: "کلاس‌های هفتگی",
     desc: "Quran study, Islamic jurisprudence, and Persian language classes for all ages. Weekly gatherings that strengthen knowledge and community bonds.",
   },
   {
     en: "Marriage Services",
-    fa: "\u062E\u062F\u0645\u0627\u062A \u0627\u0632\u062F\u0648\u0627\u062C",
+    fa: "خدمات ازدواج",
     desc: "Traditional Islamic marriage ceremonies (Aqd) with full cultural observance. Pre-marriage counseling and family guidance available.",
   },
   {
     en: "Memorial Services",
-    fa: "\u0645\u0631\u0627\u0633\u0645 \u06CC\u0627\u062F\u0628\u0648\u062F",
+    fa: "مراسم یادبود",
     desc: "Compassionate funeral and memorial support following Islamic traditions. Community support for families during difficult times.",
   },
   {
     en: "Dua Kumayl",
-    fa: "\u062F\u0639\u0627\u06CC \u06A9\u0645\u06CC\u0644",
+    fa: "دعای کمیل",
     desc: "Every Thursday evening, join the community for this beloved supplication. A weekly gathering of spiritual reflection and collective prayer.",
   },
 ];
@@ -32,7 +32,7 @@ const events = [
     day: "27",
     month: "March",
     title: "Eid al-Fitr Celebration",
-    fa: "\u0639\u06CC\u062F \u0633\u0639\u06CC\u062F \u0641\u0637\u0631",
+    fa: "عید سعید فطر",
     time: "Friday, 9:00 AM - 1:00 PM",
     desc: "Join us for Eid prayers followed by community breakfast and celebrations for all ages.",
     color: "bg-[var(--accent)]",
@@ -41,7 +41,7 @@ const events = [
     day: "28",
     month: "March",
     title: "Nowruz Gathering",
-    fa: "\u062C\u0634\u0646 \u0646\u0648\u0631\u0648\u0632 \u06F1\u06F4\u06F0\u06F5",
+    fa: "جشن نوروز ۱۴۰۵",
     time: "Saturday, 5:00 PM - 9:00 PM",
     desc: "Celebrate the Persian New Year with traditional Haft-Sin, music, poetry, and community dinner.",
     color: "bg-[var(--lapis)]",
@@ -50,7 +50,7 @@ const events = [
     day: "03",
     month: "April",
     title: "Dua Kumayl",
-    fa: "\u062F\u0639\u0627\u06CC \u06A9\u0645\u06CC\u0644",
+    fa: "دعای کمیل",
     time: "Thursday, 7:30 PM",
     desc: "Weekly Thursday evening supplication followed by community fellowship.",
     color: "bg-[var(--cypress)]",

@@ -25,13 +25,13 @@ export const metadata: Metadata = {
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const FARSI_DAYS: Record<string, string> = {
-  Sun: "\u06CC\u06A9\u0634\u0646\u0628\u0647",
-  Mon: "\u062F\u0648\u0634\u0646\u0628\u0647",
-  Tue: "\u0633\u0647\u200C\u0634\u0646\u0628\u0647",
-  Wed: "\u0686\u0647\u0627\u0631\u0634\u0646\u0628\u0647",
-  Thu: "\u067E\u0646\u062C\u0634\u0646\u0628\u0647",
-  Fri: "\u062C\u0645\u0639\u0647",
-  Sat: "\u0634\u0646\u0628\u0647",
+  Sun: "یکشنبه",
+  Mon: "دوشنبه",
+  Tue: "سه‌شنبه",
+  Wed: "چهارشنبه",
+  Thu: "پنجشنبه",
+  Fri: "جمعه",
+  Sat: "شنبه",
 };
 
 function getEventForDay(dayName: string): string | null {
@@ -78,7 +78,7 @@ export default async function PrayerTimesPage() {
       <Navbar />
       <PageHero
         title="Prayer Times"
-        titleFa="\u0627\u0648\u0642\u0627\u062A \u0634\u0631\u0639\u06CC"
+        titleFa="اوقات شرعی"
       />
 
       {/* ===== TODAY ===== */}
@@ -87,7 +87,7 @@ export default async function PrayerTimesPage() {
           <SectionHeader
             overline="Today"
             title="Daily Prayer Times"
-            titleFa="\u0627\u0648\u0642\u0627\u062A \u0634\u0631\u0639\u06CC \u0627\u0645\u0631\u0648\u0632"
+            titleFa="اوقات شرعی امروز"
           />
           <div className="max-w-[420px]">
             <PrayerCard prayers={dailyData.prayers} date={dailyData.date} />
@@ -103,7 +103,7 @@ export default async function PrayerTimesPage() {
           <SectionHeader
             overline="Monthly Calendar"
             title="March 2026 Prayer Times"
-            titleFa="\u062A\u0642\u0648\u06CC\u0645 \u0645\u0627\u0647\u0627\u0646\u0647"
+            titleFa="تقویم ماهانه"
           />
 
           {monthlyRows.length === 0 ? (

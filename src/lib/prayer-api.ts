@@ -15,27 +15,27 @@ const ALADHAN_BASE = "https://api.aladhan.com/v1";
 const LA_TZ = "America/Los_Angeles";
 
 const FALLBACK_PRAYERS: Prayer[] = [
-  { en: "Fajr", fa: "\u0627\u0630\u0627\u0646 \u0635\u0628\u062D", time: "5:27 AM" },
-  { en: "Sunrise", fa: "\u0637\u0644\u0648\u0639 \u0622\u0641\u062A\u0627\u0628", time: "6:41 AM" },
-  { en: "Dhuhr", fa: "\u0627\u0630\u0627\u0646 \u0638\u0647\u0631", time: "12:57 PM" },
-  { en: "Asr", fa: "\u0646\u0645\u0627\u0632 \u0639\u0635\u0631", time: "4:30 PM" },
-  { en: "Maghrib", fa: "\u0627\u0630\u0627\u0646 \u0645\u063A\u0631\u0628", time: "7:29 PM" },
-  { en: "Isha", fa: "\u0646\u0645\u0627\u0632 \u0639\u0634\u0627", time: "8:18 PM" },
+  { en: "Fajr", fa: "اذان صبح", time: "5:27 AM" },
+  { en: "Sunrise", fa: "طلوع آفتاب", time: "6:41 AM" },
+  { en: "Dhuhr", fa: "اذان ظهر", time: "12:57 PM" },
+  { en: "Asr", fa: "نماز عصر", time: "4:30 PM" },
+  { en: "Maghrib", fa: "اذان مغرب", time: "7:29 PM" },
+  { en: "Isha", fa: "نماز عشا", time: "8:18 PM" },
 ];
 
 const FALLBACK_DATE: PrayerDate = {
   gregorian: "Thursday, Mar 27, 2026",
-  shamsi: "\u06F7 \u0641\u0631\u0648\u0631\u062F\u06CC\u0646 \u06F1\u06F4\u06F0\u06F5",
+  shamsi: "۷ فروردین ۱۴۰۵",
   hijri: "8 Shawwal 1447",
 };
 
 const PRAYER_FA_NAMES: Record<string, string> = {
-  Fajr: "\u0627\u0630\u0627\u0646 \u0635\u0628\u062D",
-  Sunrise: "\u0637\u0644\u0648\u0639 \u0622\u0641\u062A\u0627\u0628",
-  Dhuhr: "\u0627\u0630\u0627\u0646 \u0638\u0647\u0631",
-  Asr: "\u0646\u0645\u0627\u0632 \u0639\u0635\u0631",
-  Maghrib: "\u0627\u0630\u0627\u0646 \u0645\u063A\u0631\u0628",
-  Isha: "\u0646\u0645\u0627\u0632 \u0639\u0634\u0627",
+  Fajr: "اذان صبح",
+  Sunrise: "طلوع آفتاب",
+  Dhuhr: "اذان ظهر",
+  Asr: "نماز عصر",
+  Maghrib: "اذان مغرب",
+  Isha: "نماز عشا",
 };
 
 const PRAYER_KEYS = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;

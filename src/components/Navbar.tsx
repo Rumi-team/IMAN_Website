@@ -5,11 +5,11 @@ import Link from "next/link";
 import DarkModeToggle from "./DarkModeToggle";
 
 const navItems = [
-  { en: "About", fa: "\u062F\u0631\u0628\u0627\u0631\u0647 \u0645\u0627", href: "/about" },
-  { en: "Services", fa: "\u062E\u062F\u0645\u0627\u062A", href: "/services" },
-  { en: "Events", fa: "\u0631\u0648\u06CC\u062F\u0627\u062F\u0647\u0627", href: "/events" },
-  { en: "Prayer Times", fa: "\u0627\u0648\u0642\u0627\u062A \u0634\u0631\u0639\u06CC", href: "/prayer-times" },
-  { en: "Contact", fa: "\u062A\u0645\u0627\u0633", href: "/contact" },
+  { en: "About", fa: "درباره ما", href: "/about" },
+  { en: "Services", fa: "خدمات", href: "/services" },
+  { en: "Events", fa: "رویدادها", href: "/events" },
+  { en: "Prayer Times", fa: "اوقات شرعی", href: "/prayer-times" },
+  { en: "Contact", fa: "تماس", href: "/contact" },
 ];
 
 export default function Navbar() {
