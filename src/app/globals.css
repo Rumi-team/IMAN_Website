@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/* ========================================
+   IMAN Design System — CSS Custom Properties
+   Persian Architectural Materials Palette
+   ======================================== */
+
+@theme {
+  /* Colors — Light Mode */
+  --color-bg: #F4EDE4;
+  --color-surface: #FFF9EF;
+  --color-surface-2: #E7DCC7;
+  --color-text: #1E2A30;
+  --color-text-secondary: #5A6368;
+  --color-muted: #8B9196;
+  --color-accent: #1B6B7D;
+  --color-accent-hover: #155A6A;
+  --color-lapis: #1E4D8F;
+  --color-gold: #C4963C;
+  --color-gold-light: #D4AD5A;
+  --color-persimmon: #E85D3A;
+  --color-cypress: #2D5F4E;
+  --color-madder: #8E3B2F;
+  --color-line: #D7C7AC;
+  --color-line-light: #E8DFD0;
+}
+
+:root {
+  --bg: #F4EDE4;
+  --surface: #FFF9EF;
+  --surface-2: #E7DCC7;
+  --text: #1E2A30;
+  --text-secondary: #5A6368;
+  --muted: #8B9196;
+  --accent: #1B6B7D;
+  --accent-hover: #155A6A;
+  --lapis: #1E4D8F;
+  --gold: #C4963C;
+  --gold-light: #D4AD5A;
+  --persimmon: #E85D3A;
+  --cypress: #2D5F4E;
+  --madder: #8E3B2F;
+  --line: #D7C7AC;
+  --line-light: #E8DFD0;
+}
+
+html.dark {
+  --bg: #141B20;
+  --surface: #1C252C;
+  --surface-2: #263038;
+  --text: #E8E2D8;
+  --text-secondary: #9BA3A8;
+  --muted: #6B7278;
+  --accent: #2A9AAF;
+  --accent-hover: #33B0C6;
+  --lapis: #4A7BC4;
+  --gold: #D4AD5A;
+  --gold-light: #E0C072;
+  --persimmon: #F07B5E;
+  --cypress: #4A8B72;
+  --madder: #C0584A;
+  --line: #2F3A42;
+  --line-light: #263038;
+}
+
+/* Base */
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Farsi utilities */
+.farsi {
+  direction: rtl;
+  line-height: 1.8;
+}
+
+.nastaliq {
+  direction: rtl;
+  line-height: 2.2;
+}
+
+/* Girih geometric pattern */
+.girih-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M60 0L74.6 15.4 90 0 90 30 105.4 15.4 120 30 90 30 105.4 45.4 120 60 105.4 74.6 120 90 90 90 105.4 105.4 90 120 74.6 105.4 60 120 45.4 105.4 30 120 30 90 15.4 105.4 0 90 15.4 74.6 0 60 15.4 45.4 0 30 30 30 15.4 15.4 30 0 45.4 15.4 60 0z' fill='none' stroke='%231B6B7D' stroke-width='0.5'/%3E%3Cpath d='M60 30L74.6 45.4 90 30 90 60 74.6 74.6 60 90 45.4 74.6 30 90 30 60 45.4 45.4 60 30z' fill='none' stroke='%231B6B7D' stroke-width='0.5'/%3E%3Ccircle cx='60' cy='60' r='8' fill='none' stroke='%231B6B7D' stroke-width='0.3'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+html.dark .girih-pattern {
+  opacity: 0.03;
+}
