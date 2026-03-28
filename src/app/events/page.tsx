@@ -38,16 +38,16 @@ const recurring = [
 
 const specialEvents = [
   {
-    day: "27",
+    day: "20",
     month: "March",
     title: "Eid al-Fitr Celebration",
     fa: "عید سعید فطر",
-    time: "Friday, 9:00 AM - 1:00 PM",
+    time: "Thursday, 9:00 AM - 1:00 PM",
     desc: "Join us for Eid prayers followed by community breakfast and celebrations for all ages.",
     color: "bg-[var(--accent)]",
   },
   {
-    day: "28",
+    day: "20",
     month: "March",
     title: "Nowruz 1405 Gathering",
     fa: "نوروز ۱۴۰۵",

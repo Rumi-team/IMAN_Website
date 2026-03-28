@@ -47,7 +47,7 @@ const services = [
 
 const events = [
   {
-    day: "27",
+    day: "20",
     month: "March",
     title: "Eid al-Fitr Celebration",
     fa: "عید سعید فطر",
@@ -56,7 +56,7 @@ const events = [
     color: "bg-[var(--accent)]",
   },
   {
-    day: "28",
+    day: "20",
     month: "March",
     title: "Nowruz Gathering",
     fa: "جشن نوروز ۱۴۰۵",
