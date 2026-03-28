@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMAN Design System Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   IMAN Design System — CSS Custom Properties
+   ======================================== */
+:root {
+  /* Colors — Persian Architectural Materials */
+  --bg:            #F4EDE4;  /* Kashan Plaster */
+  --surface:       #FFF9EF;  /* Parchment */
+  --surface-2:     #E7DCC7;  /* Warm Stone */
+  --text:          #1E2A30;  /* Lapis Ink */
+  --text-secondary:#5A6368;  /* Weathered Stone */
+  --muted:         #8B9196;  /* Distant Mountain */
+  --accent:        #1B6B7D;  /* Isfahan Turquoise */
+  --accent-hover:  #155A6A;  /* Deep Turquoise */
+  --lapis:         #1E4D8F;  /* Lapis Lazuli */
+  --gold:          #C4963C;  /* Illumination Gold */
+  --gold-light:    #D4AD5A;  /* Pale Gold */
+  --persimmon:     #E85D3A;  /* Persimmon Ceramic */
+  --cypress:       #2D5F4E;  /* Garden Cypress */
+  --madder:        #8E3B2F;  /* Madder Clay */
+  --line:          #D7C7AC;  /* Carved Stone */
+  --line-light:    #E8DFD0;  /* Light Divider */
+  --success:       #2D5F4E;
+  --warning:       #C4963C;
+  --error:         #8E3B2F;
+  --info:          #1E4D8F;
+
+  /* Typography */
+  --font-display:  'Cormorant Garamond', Georgia, serif;
+  --font-body:     'Source Sans 3', 'Source Sans Pro', system-ui, sans-serif;
+  --font-farsi:    'Vazirmatn', 'Tahoma', sans-serif;
+  --font-nastaliq: 'Noto Nastaliq Urdu', 'Vazirmatn', serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing (8px base) */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(30,42,48,0.06);
+  --shadow-md: 0 4px 12px rgba(30,42,48,0.08);
+  --shadow-lg: 0 8px 24px rgba(30,42,48,0.10);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --duration-short: 150ms;
+  --duration-medium: 300ms;
+}
+
+/* Dark Mode */
+html.dark {
+  --bg:            #141B20;
+  --surface:       #1C252C;
+  --surface-2:     #263038;
+  --text:          #E8E2D8;
+  --text-secondary:#9BA3A8;
+  --muted:         #6B7278;
+  --accent:        #2A9AAF;
+  --accent-hover:  #33B0C6;
+  --lapis:         #4A7BC4;
+  --gold:          #D4AD5A;
+  --gold-light:    #E0C072;
+  --persimmon:     #F07B5E;
+  --cypress:       #4A8B72;
+  --madder:        #C0584A;
+  --line:          #2F3A42;
+  --line-light:    #263038;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+/* ========================================
+   Girih Geometric Pattern SVG
+   ======================================== */
+.girih-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M60 0L74.6 15.4 90 0 90 30 105.4 15.4 120 30 90 30 105.4 45.4 120 60 105.4 74.6 120 90 90 90 105.4 105.4 90 120 74.6 105.4 60 120 45.4 105.4 30 120 30 90 15.4 105.4 0 90 15.4 74.6 0 60 15.4 45.4 0 30 30 30 15.4 15.4 30 0 45.4 15.4 60 0z' fill='none' stroke='%231B6B7D' stroke-width='0.5'/%3E%3Cpath d='M60 30L74.6 45.4 90 30 90 60 74.6 74.6 60 90 45.4 74.6 30 90 30 60 45.4 45.4 60 30z' fill='none' stroke='%231B6B7D' stroke-width='0.5'/%3E%3Ccircle cx='60' cy='60' r='8' fill='none' stroke='%231B6B7D' stroke-width='0.3'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+html.dark .girih-pattern { opacity: 0.04; }
+
+/* ========================================
+   Reset & Base
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background: var(--bg);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Farsi text helper */
+.farsi, [lang="fa"] {
+  font-family: var(--font-farsi);
+  direction: rtl;
+  line-height: 1.8;
+}
+.nastaliq {
+  font-family: var(--font-nastaliq);
+  direction: rtl;
+  line-height: 2.2;
+}
+
+a { color: var(--accent); text-decoration: none; transition: color var(--duration-short) var(--ease-out); }
+a:hover { color: var(--accent-hover); }
+
+img { max-width: 100%; display: block; }
+
+/* ========================================
+   Utility
+   ======================================== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-lg); }
+.section { padding: var(--space-4xl) 0; }
+.section-alt { background: var(--surface); }
+
+/* ========================================
+   Theme Toggle
+   ======================================== */
+.theme-toggle {
+  position: fixed;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 1000;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-short) var(--ease-out);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.theme-toggle:hover { box-shadow: var(--shadow-md); }
+.theme-toggle .icon { font-size: 1.1rem; }
+
+/* ========================================
+   0. DESIGN SYSTEM HEADER
+   ======================================== */
+.ds-header {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+  position: relative;
+  overflow: hidden;
+}
+.ds-header h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--text);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-sm);
+}
+.ds-header .subtitle {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.ds-header .farsi-subtitle {
+  font-family: var(--font-farsi);
+  font-size: 1.2rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-top: var(--space-sm);
+}
+.ds-divider {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: var(--space-xl) auto;
+}
+
+/* ========================================
+   1. REALISTIC MOCKUP — HERO SECTION
+   ======================================== */
+.mock-hero {
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mock-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-xl);
+  border-bottom: 1px solid var(--line-light);
+  background: var(--surface);
+  position: relative;
+  z-index: 2;
+}
+.mock-nav .logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+.mock-nav .logo-farsi {
+  font-family: var(--font-nastaliq);
+  font-size: 1.1rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-left: var(--space-md);
+}
+.mock-nav-links {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: center;
+  list-style: none;
+}
+.mock-nav-links li { position: relative; }
+.mock-nav-links a {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.mock-nav-links .farsi-label {
+  display: block;
+  font-family: var(--font-farsi);
+  font-size: 0.7rem;
+  color: var(--muted);
+  direction: rtl;
+  text-align: center;
+  margin-top: -2px;
+}
+.mock-nav-links a:hover { color: var(--accent); }
+.nav-donate {
+  background: var(--gold);
+  color: white !important;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: background var(--duration-short) var(--ease-out);
+}
+.nav-donate:hover { background: var(--gold-light); color: white !important; }
+
+.hero-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-3xl);
+  padding: var(--space-3xl) var(--space-xl);
+  position: relative;
+  z-index: 2;
+  align-items: center;
+}
+
+.hero-text .nastaliq-line {
+  font-family: var(--font-nastaliq);
+  font-size: 1.4rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-bottom: var(--space-md);
+  opacity: 0.85;
+}
+.hero-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: var(--space-md);
+  letter-spacing: -0.01em;
+}
+.hero-text h2 em {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+.hero-text .hero-farsi {
+  font-family: var(--font-farsi);
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  direction: rtl;
+  margin-bottom: var(--space-xl);
+  line-height: 2;
+}
+.hero-text p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin-bottom: var(--space-xl);
+}
+.hero-cta {
+  display: inline-flex;
+  gap: var(--space-md);
+}
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all var(--duration-short) var(--ease-out);
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover { background: var(--accent-hover); color: white; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--text);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1.5px solid var(--line);
+  cursor: pointer;
+  transition: all var(--duration-short) var(--ease-out);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Prayer Times Card */
+.prayer-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.prayer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--accent), var(--lapis), var(--gold));
+}
+.prayer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--line-light);
+}
+.prayer-card-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.prayer-card-date {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+.prayer-card-date .shamsi {
+  font-family: var(--font-farsi);
+  direction: rtl;
+  color: var(--gold);
+  display: block;
+  margin-top: 2px;
+}
+.prayer-card-date .hijri {
+  color: var(--muted);
+  font-size: 0.78rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.prayer-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-short) var(--ease-out);
+  margin-bottom: 2px;
+}
+.prayer-row .prayer-name-en {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.prayer-row .prayer-time {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.prayer-row .prayer-name-fa {
+  font-family: var(--font-farsi);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  direction: rtl;
+  text-align: right;
+}
+
+.prayer-row.active {
+  background: linear-gradient(135deg, rgba(27,107,125,0.08), rgba(30,77,143,0.05));
+  position: relative;
+}
+.prayer-row.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+.prayer-row.active .prayer-name-en { color: var(--accent); }
+.prayer-row.active .prayer-time { color: var(--accent); }
+
+.prayer-card-footer {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.next-prayer {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.next-prayer strong { color: var(--gold); font-weight: 600; }
+.monthly-link {
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ========================================
+   2. SERVICES SECTION (NOT 3-col icon grid)
+   ======================================== */
+.services-header {
+  margin-bottom: var(--space-3xl);
+}
+.services-header .section-label {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-sm);
+}
+.services-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: var(--space-sm);
+}
+.services-header .farsi-heading {
+  font-family: var(--font-farsi);
+  font-size: 1.2rem;
+  color: var(--gold);
+  direction: rtl;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+}
+
+.service-card {
+  background: var(--surface);
+  border: 1px solid var(--line-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  transition: all var(--duration-medium) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+.service-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform var(--duration-medium) var(--ease-out);
+}
+.service-card:hover::after { transform: scaleX(1); }
+.service-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.service-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: var(--space-xs);
+}
+.service-card .farsi-name {
+  font-family: var(--font-farsi);
+  font-size: 0.9rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-bottom: var(--space-md);
+}
+.service-card p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.service-card .learn-more {
+  display: inline-block;
+  margin-top: var(--space-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+/* Geometric divider */
+.geo-divider {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  opacity: 0.25;
+}
+.geo-divider span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
+}
+.geo-divider .center-diamond {
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ========================================
+   3. EVENTS SECTION
+   ======================================== */
+.events-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-lg);
+}
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--line-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--duration-medium) var(--ease-out);
+}
+.event-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.event-date-strip {
+  background: var(--accent);
+  color: white;
+  padding: var(--space-md);
+  text-align: center;
+}
+.event-date-strip .day {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.event-date-strip .month {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.event-card:nth-child(2) .event-date-strip { background: var(--lapis); }
+.event-card:nth-child(3) .event-date-strip { background: var(--cypress); }
+.event-body {
+  padding: var(--space-lg);
+}
+.event-body h4 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: var(--space-xs);
+}
+.event-body .event-farsi {
+  font-family: var(--font-farsi);
+  font-size: 0.85rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-bottom: var(--space-md);
+}
+.event-body .event-time {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.event-body .event-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-sm);
+  line-height: 1.5;
+}
+
+/* ========================================
+   4. COMMUNITY / CTA SECTION
+   ======================================== */
+.cta-section {
+  background: var(--text);
+  color: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+.cta-section .girih-pattern { opacity: 0.03; }
+html.dark .cta-section { background: #0D1318; }
+html.dark .cta-section .girih-pattern { opacity: 0.03; }
+.cta-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.cta-content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 400;
+  color: var(--bg);
+  margin-bottom: var(--space-md);
+}
+.cta-content .nastaliq-cta {
+  font-family: var(--font-nastaliq);
+  font-size: 1.6rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-bottom: var(--space-xl);
+  line-height: 2.4;
+}
+.cta-content p {
+  color: var(--surface-2);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin-bottom: var(--space-xl);
+}
+.btn-gold {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--text);
+  padding: var(--space-md) var(--space-2xl);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all var(--duration-short) var(--ease-out);
+  border: none;
+  cursor: pointer;
+}
+.btn-gold:hover { background: var(--gold-light); color: var(--text); }
+.cta-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+}
+.stat-item {
+  text-align: center;
+  padding: var(--space-xl);
+  border: 1px solid rgba(231,220,199,0.1);
+  border-radius: var(--radius-md);
+}
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--surface-2);
+  font-weight: 500;
+}
+
+/* ========================================
+   5. FOOTER
+   ======================================== */
+.mock-footer {
+  background: #151D22;
+  color: #9BA3A8;
+  padding: var(--space-3xl) var(--space-xl) var(--space-xl);
+}
+html.dark .mock-footer { background: #0A0F13; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: var(--space-2xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-brand .footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #E8E2D8;
+  letter-spacing: 0.08em;
+}
+.footer-brand .footer-farsi-name {
+  font-family: var(--font-nastaliq);
+  font-size: 1rem;
+  color: var(--gold);
+  direction: rtl;
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+.footer-brand p { font-size: 0.88rem; line-height: 1.6; }
+.footer-col h4 {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #E8E2D8;
+  margin-bottom: var(--space-md);
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: var(--space-sm); }
+.footer-col a { color: #9BA3A8; font-size: 0.88rem; }
+.footer-col a:hover { color: var(--gold); }
+.footer-contact-item {
+  font-size: 0.88rem;
+  margin-bottom: var(--space-sm);
+  line-height: 1.5;
+}
+.footer-bottom {
+  max-width: 1200px;
+  margin: var(--space-2xl) auto 0;
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #6B7278;
+}
+
+/* ========================================
+   DESIGN SYSTEM SECTIONS
+   ======================================== */
+
+/* Typography Specimen */
+.type-specimen { margin-bottom: var(--space-2xl); }
+.type-row {
+  padding: var(--space-xl) 0;
+  border-bottom: 1px solid var(--line-light);
+}
+.type-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-md);
+}
+.type-sample-display {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: var(--space-sm);
+}
+.type-sample-body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.7;
+}
+.type-sample-farsi {
+  font-family: var(--font-farsi);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  direction: rtl;
+  color: var(--text);
+  line-height: 2;
+  margin-bottom: var(--space-sm);
+}
+.type-sample-nastaliq {
+  font-family: var(--font-nastaliq);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  direction: rtl;
+  color: var(--text);
+  line-height: 2.4;
+}
+.type-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: var(--space-sm);
+}
+
+/* Color Palette */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+.swatch {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line-light);
+  background: var(--surface);
+}
+.swatch-color {
+  height: 100px;
+  position: relative;
+}
+.swatch-info {
+  padding: var(--space-md);
+}
+.swatch-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.swatch-hex {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.swatch-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-xs);
+  line-height: 1.4;
+}
+
+/* Component Gallery */
+.component-row {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+}
+.component-group {
+  flex: 1;
+  min-width: 260px;
+}
+.component-group h4 {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--space-md);
+}
+
+/* Buttons */
+.btn-row { display: flex; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-md); }
+
+.btn-ghost {
+  display: inline-block;
+  background: transparent;
+  color: var(--accent);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-short) var(--ease-out);
+}
+.btn-ghost:hover { background: rgba(27,107,125,0.08); }
+.btn-sm {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.82rem;
+}
+
+/* Form Inputs */
+.input-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.input-field {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--duration-short) var(--ease-out);
+  width: 100%;
+}
+.input-field:focus { border-color: var(--accent); }
+.input-field::placeholder { color: var(--muted); }
+
+/* Alerts */
+.alert {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 3px solid;
+  margin-bottom: var(--space-md);
+}
+.alert-success { background: rgba(45,95,78,0.08); border-color: var(--success); color: var(--success); }
+.alert-warning { background: rgba(196,150,60,0.08); border-color: var(--warning); color: #8B6D2A; }
+.alert-error   { background: rgba(142,59,47,0.08); border-color: var(--error); color: var(--error); }
+.alert-info    { background: rgba(30,77,143,0.08); border-color: var(--info); color: var(--info); }
+html.dark .alert-warning { color: var(--gold); }
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 900px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding: var(--space-xl);
+  }
+  .prayer-card { max-width: 100%; }
+  .services-grid { grid-template-columns: 1fr; }
+  .events-grid { grid-template-columns: 1fr; }
+  .cta-content { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .mock-nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .palette-grid { grid-template-columns: repeat(2, 1fr); }
+  .cta-stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span class="icon">&#9790;</span>
+  <span id="themeLabel">Dark Mode</span>
+</button>
+
+<!-- ========================================
+     DESIGN SYSTEM HEADER
+     ======================================== -->
+<section class="ds-header">
+  <div class="girih-pattern"></div>
+  <h1>IMAN Design System</h1>
+  <div class="subtitle">Iranian-American Muslim Association of North America</div>
+  <div class="farsi-subtitle" dir="rtl">بنیاد فرهنگی ایرانیان مسلمان آمریکای شمالی</div>
+  <div class="ds-divider"></div>
+  <div class="subtitle" style="font-size: 0.92rem; color: var(--muted);">Isfahan meets Los Angeles</div>
+</section>
+
+<!-- ========================================
+     REALISTIC MOCKUP: HOMEPAGE HERO
+     ======================================== -->
+<section style="margin-bottom: 0;">
+  <div class="container" style="margin-bottom: var(--space-xl);">
+    <div class="services-header">
+      <div class="section-label">Realistic Mockup</div>
+      <h2>Homepage Hero</h2>
+    </div>
+  </div>
+
+  <div class="mock-hero">
+    <div class="girih-pattern"></div>
+
+    <!-- Nav -->
+    <nav class="mock-nav">
+      <div style="display: flex; align-items: baseline;">
+        <span class="logo">IMAN</span>
+        <span class="logo-farsi">ایمان</span>
+      </div>
+      <ul class="mock-nav-links">
+        <li>
+          <a href="#">About</a>
+          <span class="farsi-label">درباره ما</span>
+        </li>
+        <li>
+          <a href="#">Services</a>
+          <span class="farsi-label">خدمات</span>
+        </li>
+        <li>
+          <a href="#">Events</a>
+          <span class="farsi-label">رویدادها</span>
+        </li>
+        <li>
+          <a href="#">Prayer Times</a>
+          <span class="farsi-label">اوقات شرعی</span>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+          <span class="farsi-label">تماس</span>
+        </li>
+        <li>
+          <a href="#" class="nav-donate">Donate</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="hero-content container">
+      <div class="hero-text">
+        <div class="nastaliq-line">بسم الله الرحمن الرحیم</div>
+        <h2>A Home for <em>Faith</em>,<br>Culture & Community</h2>
+        <div class="hero-farsi">خانه‌ای برای ایمان، فرهنگ و اجتماع</div>
+        <p>Serving the Iranian-American Muslim community in Los Angeles since 1990. Join us for prayer, learning, and celebration.</p>
+        <div class="hero-cta">
+          <a href="#" class="btn-primary">Join Our Community</a>
+          <a href="#" class="btn-secondary">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Prayer Times -->
+      <div class="prayer-card">
+        <div class="prayer-card-header">
+          <h3>Prayer Times</h3>
+          <div class="prayer-card-date">
+            Thursday, Mar 27, 2026
+            <span class="shamsi">۷ فروردین ۱۴۰۵</span>
+            <span class="hijri">8 Shawwal 1447</span>
+          </div>
+        </div>
+
+        <div class="prayer-row">
+          <span class="prayer-name-en">Fajr</span>
+          <span class="prayer-time">5:34 AM</span>
+          <span class="prayer-name-fa">اذان صبح</span>
+        </div>
+        <div class="prayer-row">
+          <span class="prayer-name-en">Sunrise</span>
+          <span class="prayer-time">6:48 AM</span>
+          <span class="prayer-name-fa">طلوع آفتاب</span>
+        </div>
+        <div class="prayer-row">
+          <span class="prayer-name-en">Dhuhr</span>
+          <span class="prayer-time">12:59 PM</span>
+          <span class="prayer-name-fa">اذان ظهر</span>
+        </div>
+        <div class="prayer-row active">
+          <span class="prayer-name-en">Asr</span>
+          <span class="prayer-time">4:29 PM</span>
+          <span class="prayer-name-fa">نماز عصر</span>
+        </div>
+        <div class="prayer-row">
+          <span class="prayer-name-en">Maghrib</span>
+          <span class="prayer-time">7:25 PM</span>
+          <span class="prayer-name-fa">اذان مغرب</span>
+        </div>
+        <div class="prayer-row">
+          <span class="prayer-name-en">Isha</span>
+          <span class="prayer-time">8:14 PM</span>
+          <span class="prayer-name-fa">نماز عشا</span>
+        </div>
+
+        <div class="prayer-card-footer">
+          <span class="next-prayer">Next: <strong>Maghrib in 2h 56m</strong></span>
+          <a href="#" class="monthly-link">Monthly Calendar &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     SERVICES MOCKUP
+     ======================================== -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-label">Our Services</div>
+      <h2>Serving the Community</h2>
+      <div class="farsi-heading" dir="rtl">در خدمت جامعه</div>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Weekly Classes</h3>
+        <div class="farsi-name" dir="rtl">کلاس‌های هفتگی</div>
+        <p>Quran study, Islamic jurisprudence, and Persian language classes for all ages. Weekly gatherings that strengthen knowledge and community bonds.</p>
+        <a href="#" class="learn-more">Learn More &rarr;</a>
+      </div>
+      <div class="service-card">
+        <h3>Marriage Services</h3>
+        <div class="farsi-name" dir="rtl">خدمات ازدواج</div>
+        <p>Traditional Islamic marriage ceremonies (Aqd) with full cultural observance. Pre-marriage counseling and family guidance available.</p>
+        <a href="#" class="learn-more">Learn More &rarr;</a>
+      </div>
+      <div class="service-card">
+        <h3>Memorial Services</h3>
+        <div class="farsi-name" dir="rtl">مراسم یادبود</div>
+        <p>Compassionate funeral and memorial support following Islamic traditions. Community support for families during difficult times.</p>
+        <a href="#" class="learn-more">Learn More &rarr;</a>
+      </div>
+      <div class="service-card">
+        <h3>Dua Kumayl</h3>
+        <div class="farsi-name" dir="rtl">دعای کمیل</div>
+        <p>Every Thursday evening, join the community for this beloved supplication. A weekly gathering of spiritual reflection and collective prayer.</p>
+        <a href="#" class="learn-more">Learn More &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Geometric Divider -->
+<div class="geo-divider">
+  <span></span><span></span><span></span>
+  <span class="center-diamond"></span>
+  <span></span><span></span><span></span>
+</div>
+
+<!-- ========================================
+     EVENTS MOCKUP
+     ======================================== -->
+<section class="section">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-label">Upcoming Events</div>
+      <h2>What's Happening at IMAN</h2>
+      <div class="farsi-heading" dir="rtl">رویدادهای پیش رو</div>
+    </div>
+
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-date-strip">
+          <div class="day">27</div>
+          <div class="month">March</div>
+        </div>
+        <div class="event-body">
+          <h4>Eid al-Fitr Celebration</h4>
+          <div class="event-farsi" dir="rtl">عید سعید فطر</div>
+          <div class="event-time">Friday, 9:00 AM - 1:00 PM</div>
+          <div class="event-desc">Join us for Eid prayers followed by community breakfast and celebrations for all ages.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-date-strip">
+          <div class="day">28</div>
+          <div class="month">March</div>
+        </div>
+        <div class="event-body">
+          <h4>Nowruz Gathering</h4>
+          <div class="event-farsi" dir="rtl">جشن نوروز ۱۴۰۵</div>
+          <div class="event-time">Saturday, 5:00 PM - 9:00 PM</div>
+          <div class="event-desc">Celebrate the Persian New Year with traditional Haft-Sin, music, poetry, and community dinner.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-date-strip">
+          <div class="day">03</div>
+          <div class="month">April</div>
+        </div>
+        <div class="event-body">
+          <h4>Dua Kumayl</h4>
+          <div class="event-farsi" dir="rtl">دعای کمیل</div>
+          <div class="event-time">Thursday, 7:30 PM</div>
+          <div class="event-desc">Weekly Thursday evening supplication followed by community fellowship.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     COMMUNITY CTA SECTION
+     ======================================== -->
+<section class="section cta-section">
+  <div class="girih-pattern"></div>
+  <div class="container">
+    <div class="cta-content">
+      <div>
+        <div class="nastaliq-cta" dir="rtl">درهای ما همیشه باز است</div>
+        <h2>Join the IMAN Community</h2>
+        <p>Our door is always open for new members. Visit our center, attend our events and classes, and find your community in Los Angeles. We are here to support, connect, and grow together.</p>
+        <a href="#" class="btn-gold">Become a Member</a>
+      </div>
+      <div class="cta-stats">
+        <div class="stat-item">
+          <div class="stat-number">35+</div>
+          <div class="stat-label">Years Serving LA</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">52</div>
+          <div class="stat-label">Weekly Programs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Languages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     FOOTER MOCKUP
+     ======================================== -->
+<footer class="mock-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">IMAN</div>
+      <div class="footer-farsi-name" dir="rtl">بنیاد فرهنگی ایرانیان مسلمان آمریکای شمالی</div>
+      <p>Iranian-American Muslim Association of North America. Serving the community with faith, culture, and compassion since 1990.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Events</a></li>
+        <li><a href="#">Prayer Times</a></li>
+        <li><a href="#">Donate</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Weekly Classes</a></li>
+        <li><a href="#">Marriage</a></li>
+        <li><a href="#">Memorial</a></li>
+        <li><a href="#">Counseling</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <div class="footer-contact-item">3376 Motor Ave<br>Los Angeles, CA 90034</div>
+      <div class="footer-contact-item">(310) 202-8181</div>
+      <div class="footer-contact-item"><a href="#">info@iman.org</a></div>
+      <div class="footer-contact-item" style="margin-top: var(--space-md);">
+        <strong>Office Hours</strong><br>Monday - Sunday<br>9:00 AM - 6:00 PM
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 IMAN Foundation. All Rights Reserved.</span>
+    <span style="font-family: var(--font-farsi); direction: rtl;">ایمان &middot; لس آنجلس</span>
+  </div>
+</footer>
+
+<!-- ========================================
+     DESIGN SYSTEM: TYPOGRAPHY SPECIMEN
+     ======================================== -->
+<section class="section" style="padding-top: var(--space-4xl);">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-label">Design System</div>
+      <h2>Typography</h2>
+      <div class="farsi-heading" dir="rtl">تایپوگرافی</div>
+    </div>
+
+    <div class="type-specimen">
+      <!-- Cormorant Garamond -->
+      <div class="type-row">
+        <div class="type-label">English Display &mdash; Cormorant Garamond</div>
+        <div class="type-sample-display">A Home for Faith, Culture & Community</div>
+        <div class="type-sample-display" style="font-style: italic; font-weight: 300; font-size: clamp(1.6rem, 3vw, 2.4rem); color: var(--accent);">Where Isfahan meets Los Angeles</div>
+        <div class="type-meta">Weights: 300, 400, 500, 600, 700 &middot; Google Fonts &middot; High-contrast serifs with carved-inscription feel</div>
+      </div>
+
+      <!-- Source Sans 3 -->
+      <div class="type-row">
+        <div class="type-label">English Body &mdash; Source Sans 3</div>
+        <div class="type-sample-body">IMAN is the Iranian-American Muslim Association of North America, serving the Los Angeles Iranian-American community since 1990. We offer weekly classes, marriage and memorial services, and daily congregational prayers. Our center is a home for faith, culture, and community gatherings that honor both Islamic traditions and Persian heritage.</div>
+        <div class="type-meta">Weights: 300-700 &middot; Google Fonts &middot; Clean humanist sans, excellent readability for body text and UI</div>
+      </div>
+
+      <!-- Vazirmatn -->
+      <div class="type-row">
+        <div class="type-label">Farsi All-Purpose &mdash; Vazirmatn</div>
+        <div class="type-sample-farsi" dir="rtl">بنیاد فرهنگی ایرانیان مسلمان آمریکای شمالی</div>
+        <div style="font-family: var(--font-farsi); direction: rtl; font-size: 1rem; color: var(--text-secondary); line-height: 2.2; max-width: 600px; margin-left: auto;">
+          بنیاد ایمان از سال ۱۹۹۰ در خدمت جامعه ایرانیان مسلمان لس آنجلس بوده است. ما کلاس‌های هفتگی، خدمات ازدواج و یادبود، و نمازهای جماعت روزانه ارائه می‌دهیم. مرکز ما خانه‌ای برای ایمان، فرهنگ و اجتماع است.
+        </div>
+        <div class="type-meta">9 weights (Thin-Black) &middot; Google Fonts &middot; The premier Persian web font by Saber Rastikerdar</div>
+      </div>
+
+      <!-- Noto Nastaliq Urdu -->
+      <div class="type-row">
+        <div class="type-label">Farsi Ceremonial &mdash; Noto Nastaliq Urdu</div>
+        <div class="type-sample-nastaliq" dir="rtl">بسم الله الرحمن الرحیم</div>
+        <div class="type-sample-nastaliq" dir="rtl" style="font-size: clamp(1.4rem, 2.5vw, 2rem); color: var(--gold);">درهای ما همیشه باز است</div>
+        <div class="type-meta">Use sparingly for ceremonial moments: bismillah, dua headers, hero phrases &middot; Google Fonts &middot; Nastaliq = illumination, not interface</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Geometric Divider -->
+<div class="geo-divider">
+  <span></span><span></span><span></span>
+  <span class="center-diamond"></span>
+  <span></span><span></span><span></span>
+</div>
+
+<!-- ========================================
+     DESIGN SYSTEM: COLOR PALETTE
+     ======================================== -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-label">Design System</div>
+      <h2>Color Palette</h2>
+      <div class="farsi-heading" dir="rtl">پالت رنگ</div>
+      <p style="color: var(--text-secondary); max-width: 600px; margin-top: var(--space-md);">Every color is derived from Persian architectural materials: tilework glazes, carved stone, illuminated manuscripts, and the natural landscape of Iranian gardens.</p>
+    </div>
+
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1B6B7D;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Isfahan Turquoise</div>
+          <div class="swatch-hex">#1B6B7D</div>
+          <div class="swatch-desc">Primary accent. The dominant haft-rang tilework glaze.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1E4D8F;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Lapis Lazuli</div>
+          <div class="swatch-hex">#1E4D8F</div>
+          <div class="swatch-desc">Depth and structure. From unpolished lapis pigment.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #C4963C;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Illumination Gold</div>
+          <div class="swatch-hex">#C4963C</div>
+          <div class="swatch-desc">Ceremonial accent. Tazhib manuscript gilding.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #F4EDE4;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Kashan Plaster</div>
+          <div class="swatch-hex">#F4EDE4</div>
+          <div class="swatch-desc">Primary background. Warm lime plaster in afternoon light.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #FFF9EF;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Parchment</div>
+          <div class="swatch-hex">#FFF9EF</div>
+          <div class="swatch-desc">Surface/cards. Aged manuscript paper.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1E2A30;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Lapis Ink</div>
+          <div class="swatch-hex">#1E2A30</div>
+          <div class="swatch-desc">Primary text. Blue-charcoal, never pure black.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #E85D3A;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Persimmon Ceramic</div>
+          <div class="swatch-hex">#E85D3A</div>
+          <div class="swatch-desc">Hot accent. Safavid tile terracotta. Use sparingly.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #2D5F4E;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Garden Cypress</div>
+          <div class="swatch-hex">#2D5F4E</div>
+          <div class="swatch-desc">Sophisticated near-black green. NOT mosque green.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #8E3B2F;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Madder Clay</div>
+          <div class="swatch-hex">#8E3B2F</div>
+          <div class="swatch-desc">Error/danger state. From madder root dye.</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #D7C7AC;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Carved Stone</div>
+          <div class="swatch-hex">#D7C7AC</div>
+          <div class="swatch-desc">Dividers and borders. Sandstone relief texture.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================
+     DESIGN SYSTEM: COMPONENTS
+     ======================================== -->
+<section class="section">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-label">Design System</div>
+      <h2>Components</h2>
+      <div class="farsi-heading" dir="rtl">اجزای طراحی</div>
+    </div>
+
+    <div class="component-row">
+      <!-- Buttons -->
+      <div class="component-group">
+        <h4>Buttons</h4>
+        <div class="btn-row">
+          <button class="btn-primary">Primary Action</button>
+          <button class="btn-secondary">Secondary</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn-gold">Donate Now</button>
+          <button class="btn-ghost">Ghost Button</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary btn-sm">Small Primary</button>
+          <button class="btn-secondary btn-sm">Small Secondary</button>
+        </div>
+      </div>
+
+      <!-- Form Inputs -->
+      <div class="component-group">
+        <h4>Form Inputs</h4>
+        <div class="input-demo">
+          <input type="text" class="input-field" placeholder="Full Name">
+          <input type="email" class="input-field" placeholder="Email Address">
+          <input type="text" class="input-field" placeholder="نام کامل" dir="rtl" style="font-family: var(--font-farsi);">
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row">
+      <!-- Alerts -->
+      <div class="component-group" style="flex: 2;">
+        <h4>Alerts &amp; Notifications</h4>
+        <div class="alert alert-success">Jumu'ah prayers begin at 1:00 PM today. Please arrive 15 minutes early.</div>
+        <div class="alert alert-warning">Ramadan schedule is now in effect. Check updated prayer times.</div>
+        <div class="alert alert-error">The center will be closed for maintenance on April 5th.</div>
+        <div class="alert alert-info">New Quran study class starting next week. Register now.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const label = document.getElementById('themeLabel');
+  const icon = document.querySelector('.theme-toggle .icon');
+  if (html.classList.contains('light')) {
+    html.classList.remove('light');
+    html.classList.add('dark');
+    label.textContent = 'Light Mode';
+    icon.innerHTML = '&#9788;';
+  } else {
+    html.classList.remove('dark');
+    html.classList.add('light');
+    label.textContent = 'Dark Mode';
+    icon.innerHTML = '&#9790;';
+  }
+}
+</script>
+
+</body>
+</html>
