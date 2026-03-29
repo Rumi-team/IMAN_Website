@@ -30,9 +30,11 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [published, setPublished] = useState(false);
   const [extracted, setExtracted] = useState<ExtractedData | null>(null);
   const [extractError, setExtractError] = useState("");
-  const [preview, setPreview] = useState<string | null>(null);
+  const [publishError, setPublishError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleLogin(e: React.FormEvent) {
@@ -57,11 +59,8 @@ export default function AdminPage() {
     setUploading(true);
     setExtractError("");
     setExtracted(null);
-
-    // Show preview
-    const reader = new FileReader();
-    reader.onload = (e) => setPreview(e.target?.result as string);
-    reader.readAsDataURL(file);
+    setPublished(false);
+    setPublishError("");
 
     const formData = new FormData();
     formData.append("image", file);
@@ -81,6 +80,35 @@ export default function AdminPage() {
       setExtractError("Network error. Please try again.");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handlePublish() {
+    if (!extracted) return;
+
+    setPublishing(true);
+    setPublishError("");
+
+    try {
+      const res = await fetch("/api/admin/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          month: extracted.month,
+          year: extracted.year,
+          events: extracted.events,
+        }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setPublished(true);
+      } else {
+        setPublishError(json.error || "Publish failed");
+      }
+    } catch {
+      setPublishError("Network error. Please try again.");
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -181,7 +209,8 @@ export default function AdminPage() {
                 onChange={() => {
                   setExtracted(null);
                   setExtractError("");
-                  setPreview(null);
+                  setPublished(false);
+                  setPublishError("");
                 }}
               />
               <button
@@ -201,168 +230,158 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Preview + Results side by side */}
-        {(preview || extracted) && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Image Preview */}
-            {preview && (
-              <div>
-                <h3 className="text-sm font-semibold text-[var(--text)] mb-3 uppercase tracking-widest">
-                  Uploaded Image
-                </h3>
-                <div className="border border-[var(--line)] rounded-lg overflow-hidden">
-                  <img
-                    src={preview}
-                    alt="Uploaded prayer schedule"
-                    className="w-full"
-                  />
+        {/* Extracted Events */}
+        {extracted && (
+          <div>
+            {/* Month badge */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="bg-[var(--accent)] text-white px-5 py-2 rounded-lg">
+                <span className="font-[family-name:var(--font-display)] text-lg font-semibold">
+                  {extracted.month} {extracted.year}
+                </span>
+                {extracted.hijriMonth && (
+                  <span className="text-white/70 text-sm ml-2">
+                    ({extracted.hijriMonth})
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-[var(--muted)]">
+                {extracted.events?.length || 0} events extracted
+              </p>
+            </div>
+
+            <h3 className="text-sm font-semibold text-[var(--text)] mb-3 uppercase tracking-widest">
+              Extracted Events
+            </h3>
+
+            {/* Events list */}
+            {extracted.events && extracted.events.length > 0 && (
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4 mb-6">
+                <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                  {extracted.events.map((event, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 py-2 border-b border-[var(--line-light)] last:border-0"
+                    >
+                      <span className="text-xs font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2 py-0.5 rounded min-w-[32px] text-center">
+                        {event.day}
+                      </span>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-[var(--text)]">
+                          {event.eventEn}
+                        </p>
+                        <p
+                          className="text-xs text-[var(--gold)] font-[family-name:var(--font-farsi)]"
+                          dir="rtl"
+                          lang="fa"
+                        >
+                          {event.eventFa}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded ${
+                          event.type === "holiday"
+                            ? "bg-[var(--gold)]/10 text-[var(--gold)]"
+                            : event.type === "special"
+                            ? "bg-[var(--lapis)]/10 text-[var(--lapis)]"
+                            : "bg-[var(--muted)]/10 text-[var(--muted)]"
+                        }`}
+                      >
+                        {event.type}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Extracted Data */}
-            {extracted && (
-              <div>
-                <h3 className="text-sm font-semibold text-[var(--text)] mb-3 uppercase tracking-widest">
-                  Extracted Data
-                </h3>
-
-                {/* Month info */}
-                <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4 mb-4">
-                  <p className="font-semibold text-[var(--text)]">
-                    {extracted.month} {extracted.year}
-                    {extracted.hijriMonth && (
-                      <span className="text-[var(--gold)] ml-2">
-                        ({extracted.hijriMonth})
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-sm text-[var(--muted)]">
-                    {extracted.prayerTimes?.length || 0} days extracted,{" "}
-                    {extracted.events?.length || 0} events found
-                  </p>
-                </div>
-
-                {/* Events */}
-                {extracted.events && extracted.events.length > 0 && (
-                  <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4 mb-4">
-                    <h4 className="text-sm font-semibold text-[var(--accent)] mb-3">
-                      Events & Special Occasions
-                    </h4>
-                    <div className="space-y-2 max-h-[400px] overflow-y-auto">
-                      {extracted.events.map((event, i) => (
-                        <div
-                          key={i}
-                          className="flex items-start gap-3 py-2 border-b border-[var(--line-light)] last:border-0"
+            {/* Prayer times sample */}
+            {extracted.prayerTimes && extracted.prayerTimes.length > 0 && (
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4 mb-6">
+                <h4 className="text-sm font-semibold text-[var(--accent)] mb-3">
+                  Prayer Times (first 5 days)
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-[var(--muted)] border-b border-[var(--line-light)]">
+                        <th className="px-2 py-1 text-left">Day</th>
+                        <th className="px-2 py-1">Fajr</th>
+                        <th className="px-2 py-1">Sunrise</th>
+                        <th className="px-2 py-1">Dhuhr</th>
+                        <th className="px-2 py-1">Asr</th>
+                        <th className="px-2 py-1">Maghrib</th>
+                        <th className="px-2 py-1">Isha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {extracted.prayerTimes.slice(0, 5).map((pt) => (
+                        <tr
+                          key={pt.day}
+                          className="border-b border-[var(--line-light)] last:border-0"
                         >
-                          <span className="text-xs font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2 py-0.5 rounded min-w-[32px] text-center">
-                            {event.day}
-                          </span>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-[var(--text)]">
-                              {event.eventEn}
-                            </p>
-                            <p
-                              className="text-xs text-[var(--gold)] font-[family-name:var(--font-farsi)]"
-                              dir="rtl"
-                              lang="fa"
-                            >
-                              {event.eventFa}
-                            </p>
-                          </div>
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded ${
-                              event.type === "holiday"
-                                ? "bg-[var(--gold)]/10 text-[var(--gold)]"
-                                : event.type === "special"
-                                ? "bg-[var(--lapis)]/10 text-[var(--lapis)]"
-                                : "bg-[var(--muted)]/10 text-[var(--muted)]"
-                            }`}
-                          >
-                            {event.type}
-                          </span>
-                        </div>
+                          <td className="px-2 py-1 font-medium text-[var(--text)]">
+                            {pt.day}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.fajr}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.sunrise}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.dhuhr}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.asr}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.maghrib}
+                          </td>
+                          <td className="px-2 py-1 text-center tabular-nums">
+                            {pt.isha}
+                          </td>
+                        </tr>
                       ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Prayer times sample */}
-                {extracted.prayerTimes && extracted.prayerTimes.length > 0 && (
-                  <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4">
-                    <h4 className="text-sm font-semibold text-[var(--accent)] mb-3">
-                      Prayer Times (first 5 days)
-                    </h4>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs">
-                        <thead>
-                          <tr className="text-[var(--muted)] border-b border-[var(--line-light)]">
-                            <th className="px-2 py-1 text-left">Day</th>
-                            <th className="px-2 py-1">Fajr</th>
-                            <th className="px-2 py-1">Sunrise</th>
-                            <th className="px-2 py-1">Dhuhr</th>
-                            <th className="px-2 py-1">Asr</th>
-                            <th className="px-2 py-1">Maghrib</th>
-                            <th className="px-2 py-1">Isha</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {extracted.prayerTimes.slice(0, 5).map((pt) => (
-                            <tr
-                              key={pt.day}
-                              className="border-b border-[var(--line-light)] last:border-0"
-                            >
-                              <td className="px-2 py-1 font-medium text-[var(--text)]">
-                                {pt.day}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.fajr}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.sunrise}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.dhuhr}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.asr}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.maghrib}
-                              </td>
-                              <td className="px-2 py-1 text-center tabular-nums">
-                                {pt.isha}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <p className="text-xs text-[var(--muted)] mt-2">
-                      Showing 5 of {extracted.prayerTimes.length} days
-                    </p>
-                  </div>
-                )}
-
-                {/* JSON download */}
-                <button
-                  onClick={() => {
-                    const blob = new Blob(
-                      [JSON.stringify(extracted, null, 2)],
-                      { type: "application/json" }
-                    );
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `iman-schedule-${extracted.month}-${extracted.year}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="mt-4 w-full bg-[var(--accent)] text-white py-2 rounded font-semibold text-sm hover:bg-[var(--accent-hover)] transition-colors"
-                >
-                  Download Extracted JSON
-                </button>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-[var(--muted)] mt-2">
+                  Showing 5 of {extracted.prayerTimes.length} days
+                </p>
               </div>
+            )}
+
+            {/* Publish button */}
+            {publishError && (
+              <div className="bg-[var(--madder)]/10 border border-[var(--madder)] rounded px-4 py-3 text-sm text-[var(--madder)] mb-4">
+                {publishError}
+              </div>
+            )}
+
+            {published ? (
+              <div className="bg-[var(--cypress)]/10 border border-[var(--cypress)] rounded-lg px-4 py-4 text-center">
+                <p className="text-[var(--cypress)] font-semibold mb-1">
+                  Events published to website
+                </p>
+                <p className="text-xs text-[var(--muted)]">
+                  {extracted.month} {extracted.year} events are now live on the{" "}
+                  <a href="/events" className="text-[var(--accent)] underline">
+                    Events page
+                  </a>
+                  . They will automatically be removed when the month passes.
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={handlePublish}
+                disabled={publishing}
+                className="w-full bg-[var(--accent)] text-white py-3 rounded-lg font-semibold text-sm hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {publishing
+                  ? "Publishing..."
+                  : `Publish ${extracted.month} Events to Website`}
+              </button>
             )}
           </div>
         )}

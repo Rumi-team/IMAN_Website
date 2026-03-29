@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import PageHero from "@/components/PageHero";
 import SectionHeader from "@/components/SectionHeader";
 import GeoDivider from "@/components/GeoDivider";
+import PublishedEvents from "@/components/PublishedEvents";
 
 export const metadata: Metadata = {
   title: "Events | IMAN",
@@ -135,6 +136,9 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* ===== ADMIN-PUBLISHED MONTHLY EVENTS ===== */}
+      <PublishedEvents />
 
       <GeoDivider />
 
