@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
 import GeoDivider from "@/components/GeoDivider";
 import Footer from "@/components/Footer";
+import DailyWisdom from "@/components/DailyWisdom";
 import SectionHeader from "@/components/SectionHeader";
 import { fetchDailyPrayers } from "@/lib/prayer-api";
 
@@ -412,6 +413,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <DailyWisdom />
 
       <Footer />
     </>
