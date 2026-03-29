@@ -20,29 +20,32 @@ function parse12h(time: string): number {
   return h * 60 + min;
 }
 
-function useActivePrayer(prayers: Prayer[]) {
-  const [activeIndex, setActiveIndex] = useState(-1);
+function useNextPrayer(prayers: Prayer[]) {
+  const [nextIndex, setNextIndex] = useState(-1);
 
   useEffect(() => {
     function update() {
       const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
       const nowMin = now.getHours() * 60 + now.getMinutes();
+      // Find the NEXT prayer (first one whose time hasn't passed yet)
       let idx = -1;
-      for (let i = prayers.length - 1; i >= 0; i--) {
-        if (nowMin >= parse12h(prayers[i].time)) { idx = i; break; }
+      for (let i = 0; i < prayers.length; i++) {
+        if (nowMin < parse12h(prayers[i].time)) { idx = i; break; }
       }
-      setActiveIndex(idx);
+      // If all prayers have passed today, highlight the last one (Isha)
+      if (idx === -1) idx = prayers.length - 1;
+      setNextIndex(idx);
     }
     update();
-    const interval = setInterval(update, 60000); // re-check every minute
+    const interval = setInterval(update, 60000);
     return () => clearInterval(interval);
   }, [prayers]);
 
-  return activeIndex;
+  return nextIndex;
 }
 
 export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "/prayer-times" }: PrayerCardProps) {
-  const activeIndex = useActivePrayer(prayers);
+  const activeIndex = useNextPrayer(prayers);
   return (
     <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-6 shadow-lg relative overflow-hidden">
       {/* Top gradient border */}
