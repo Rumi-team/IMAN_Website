@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import type { Prayer, PrayerDate } from "@/lib/types";
 
 interface PrayerCardProps {
@@ -7,7 +10,39 @@ interface PrayerCardProps {
   calendarHref?: string;
 }
 
+function parse12h(time: string): number {
+  const m = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 0;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+  if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+function useActivePrayer(prayers: Prayer[]) {
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  useEffect(() => {
+    function update() {
+      const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      let idx = -1;
+      for (let i = prayers.length - 1; i >= 0; i--) {
+        if (nowMin >= parse12h(prayers[i].time)) { idx = i; break; }
+      }
+      setActiveIndex(idx);
+    }
+    update();
+    const interval = setInterval(update, 60000); // re-check every minute
+    return () => clearInterval(interval);
+  }, [prayers]);
+
+  return activeIndex;
+}
+
 export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "/prayer-times" }: PrayerCardProps) {
+  const activeIndex = useActivePrayer(prayers);
   return (
     <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-6 shadow-lg relative overflow-hidden">
       {/* Top gradient border */}
@@ -41,21 +76,23 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
 
       {/* Prayer rows */}
       <div className="space-y-0.5">
-        {prayers.map((prayer) => (
+        {prayers.map((prayer, i) => {
+          const isActive = i === activeIndex;
+          return (
           <div
             key={prayer.en}
             className={`grid grid-cols-3 items-center px-3 py-2 rounded transition-colors ${
-              prayer.active
+              isActive
                 ? "bg-gradient-to-r from-[var(--accent)]/8 to-[var(--lapis)]/5 relative"
                 : ""
             }`}
           >
-            {prayer.active && (
+            {isActive && (
               <div className="absolute left-0 top-1 bottom-1 w-[3px] bg-[var(--gold)] rounded" />
             )}
             <span
               className={`text-sm font-medium ${
-                prayer.active
+                isActive
                   ? "text-[var(--accent)]"
                   : "text-[var(--text)]"
               }`}
@@ -64,7 +101,7 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
             </span>
             <span
               className={`text-sm font-semibold text-center tabular-nums ${
-                prayer.active
+                isActive
                   ? "text-[var(--accent)]"
                   : "text-[var(--text)]"
               }`}
@@ -79,7 +116,8 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
               {prayer.fa}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Footer */}
