@@ -122,7 +122,7 @@ export default function AdminPage() {
               IMAN Admin
             </h1>
             <p
-              className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)]"
+              className="font-[IranNastaliq] text-lg text-[var(--gold)]"
               dir="rtl"
               lang="fa"
             >
@@ -172,7 +172,7 @@ export default function AdminPage() {
             IMAN Admin
           </span>
           <span
-            className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)]"
+            className="font-[IranNastaliq] text-sm text-[var(--gold)]"
             dir="rtl"
             lang="fa"
           >
@@ -271,7 +271,7 @@ export default function AdminPage() {
                           {event.eventEn}
                         </p>
                         <p
-                          className="text-xs text-[var(--gold)] font-[family-name:var(--font-farsi)]"
+                          className="text-xs text-[var(--gold)] font-[IranNastaliq]"
                           dir="rtl"
                           lang="fa"
                         >

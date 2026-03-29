@@ -17,7 +17,7 @@ export default function NotFound() {
             Page Not Found
           </h1>
           <p
-            className="font-[family-name:var(--font-farsi)] text-xl text-[var(--gold)] mb-8"
+            className="font-[IranNastaliq] text-xl text-[var(--gold)] mb-8"
             dir="rtl"
             lang="fa"
           >

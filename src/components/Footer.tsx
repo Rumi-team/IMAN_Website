@@ -8,7 +8,7 @@ export default function Footer() {
             IMAN
           </div>
           <div
-            className="font-[family-name:var(--font-nastaliq)] text-base text-[var(--gold)] mt-1 mb-4"
+            className="font-[IranNastaliq] text-base text-[var(--gold)] mt-1 mb-4"
             dir="rtl"
             lang="fa"
           >
@@ -102,7 +102,7 @@ export default function Footer() {
       <div className="max-w-[1200px] mx-auto mt-10 pt-6 border-t border-white/8 flex flex-col sm:flex-row justify-between items-center text-xs text-[var(--muted)]">
         <span>&copy; 2026 IMAN Foundation. All Rights Reserved.</span>
         <span
-          className="font-[family-name:var(--font-farsi)] mt-2 sm:mt-0"
+          className="font-[IranNastaliq] mt-2 sm:mt-0"
           dir="rtl"
           lang="fa"
         >

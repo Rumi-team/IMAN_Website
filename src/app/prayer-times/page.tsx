@@ -177,7 +177,7 @@ export default async function PrayerTimesPage() {
                             {row.dayName}
                           </span>
                           <span
-                            className="block font-[family-name:var(--font-farsi)] text-xs text-[var(--muted)]"
+                            className="block font-[IranNastaliq] text-xs text-[var(--muted)]"
                             dir="rtl"
                             lang="fa"
                           >

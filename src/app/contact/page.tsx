@@ -96,7 +96,7 @@ export default function ContactPage() {
                 Send a Message
               </h3>
               <p
-                className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-6"
+                className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-6"
                 dir="rtl"
                 lang="fa"
               >

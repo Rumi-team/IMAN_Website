@@ -80,7 +80,7 @@ export default function PublishedEvents() {
                         {event.eventEn}
                       </h4>
                       <p
-                        className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)]"
+                        className="font-[IranNastaliq] text-sm text-[var(--gold)]"
                         dir="rtl"
                         lang="fa"
                       >

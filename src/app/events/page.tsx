@@ -119,7 +119,7 @@ export default function EventsPage() {
                   {event.en}
                 </h3>
                 <p
-                  className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-2"
+                  className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-2"
                   dir="rtl"
                   lang="fa"
                 >
@@ -171,7 +171,7 @@ export default function EventsPage() {
                     {event.title}
                   </h4>
                   <p
-                    className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-3"
+                    className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-3"
                     dir="rtl"
                     lang="fa"
                   >

@@ -13,7 +13,7 @@ export default function PageHero({ title, titleFa, description }: PageHeroProps)
           {title}
         </h1>
         <p
-          className="font-[family-name:var(--font-farsi)] text-xl text-[var(--gold)] mb-4"
+          className="font-[IranNastaliq] text-xl text-[var(--gold)] mb-4"
           dir="rtl"
           lang="fa"
         >

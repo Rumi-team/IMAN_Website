@@ -148,7 +148,7 @@ export default function AboutPage() {
                   {value.en}
                 </h3>
                 <p
-                  className="font-[family-name:var(--font-farsi)] text-base text-[var(--gold)] mb-4"
+                  className="font-[IranNastaliq] text-base text-[var(--gold)] mb-4"
                   dir="rtl"
                   lang="fa"
                 >

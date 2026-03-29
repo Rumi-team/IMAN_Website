@@ -41,7 +41,7 @@ export default function Navbar() {
           IMAN
         </Link>
         <span
-          className="font-[family-name:var(--font-nastaliq)] text-base text-[var(--gold)]"
+          className="font-[IranNastaliq] text-base text-[var(--gold)]"
           dir="rtl"
           lang="fa"
         >
@@ -59,7 +59,7 @@ export default function Navbar() {
             >
               {item.en}
               <span
-                className="block font-[family-name:var(--font-farsi)] text-xs text-[var(--muted)] -mt-0.5"
+                className="block font-[IranNastaliq] text-xs text-[var(--muted)] -mt-0.5"
                 dir="rtl"
                 lang="fa"
               >
@@ -151,7 +151,7 @@ export default function Navbar() {
                   >
                     <span>{item.en}</span>
                     <span
-                      className="font-[family-name:var(--font-farsi)] text-xs text-[var(--muted)]"
+                      className="font-[IranNastaliq] text-xs text-[var(--muted)]"
                       dir="rtl"
                       lang="fa"
                     >

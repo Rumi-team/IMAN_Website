@@ -59,7 +59,7 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
           </span>
           {date.shamsi && (
             <span
-              className="block font-[family-name:var(--font-farsi)] text-[var(--gold)] text-xs mt-0.5"
+              className="block font-[IranNastaliq] text-[var(--gold)] text-xs mt-0.5"
               dir="rtl"
               lang="fa"
             >
@@ -109,7 +109,7 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
               {prayer.time}
             </span>
             <span
-              className="font-[family-name:var(--font-farsi)] text-sm text-[var(--text-secondary)] text-right"
+              className="font-[IranNastaliq] text-sm text-[var(--text-secondary)] text-right"
               dir="rtl"
               lang="fa"
             >

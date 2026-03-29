@@ -97,7 +97,7 @@ export default async function Home() {
             {/* Text */}
             <div>
               <p
-                className="font-[family-name:var(--font-nastaliq)] text-xl text-[var(--gold)] opacity-85 mb-4"
+                className="font-[IranNastaliq] text-xl text-[var(--gold)] opacity-85 mb-4"
                 dir="rtl"
               >
                 بسم الله الرحمن الرحیم
@@ -108,7 +108,7 @@ export default async function Home() {
                 Culture &amp; Community
               </h1>
               <p
-                className="font-[family-name:var(--font-farsi)] text-lg text-[var(--text-secondary)] mb-6"
+                className="font-[IranNastaliq] text-lg text-[var(--text-secondary)] mb-6"
                 dir="rtl"
                 style={{ lineHeight: 2 }}
               >
@@ -151,7 +151,7 @@ export default async function Home() {
               Serving the Community
             </h2>
             <p
-              className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)]"
+              className="font-[IranNastaliq] text-lg text-[var(--gold)]"
               dir="rtl"
             >
               در خدمت جامعه
@@ -169,7 +169,7 @@ export default async function Home() {
                   {service.en}
                 </h3>
                 <p
-                  className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-3"
+                  className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-3"
                   dir="rtl"
                 >
                   {service.fa}
@@ -202,7 +202,7 @@ export default async function Home() {
               What&apos;s Happening at IMAN
             </h2>
             <p
-              className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)]"
+              className="font-[IranNastaliq] text-lg text-[var(--gold)]"
               dir="rtl"
             >
               رویدادهای پیش رو
@@ -230,7 +230,7 @@ export default async function Home() {
                     {event.title}
                   </h4>
                   <p
-                    className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-3"
+                    className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-3"
                     dir="rtl"
                   >
                     {event.fa}
@@ -337,7 +337,7 @@ export default async function Home() {
                 Bridging Cultures
               </h3>
               <p
-                className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)] mb-4"
+                className="font-[IranNastaliq] text-lg text-[var(--gold)] mb-4"
                 dir="rtl"
                 lang="fa"
               >
@@ -372,7 +372,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <p
-                className="font-[family-name:var(--font-nastaliq)] text-2xl text-[var(--gold)] mb-6"
+                className="font-[IranNastaliq] text-2xl text-[var(--gold)] mb-6"
                 dir="rtl"
                 style={{ lineHeight: 2.4 }}
               >

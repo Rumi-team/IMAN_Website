@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* IranNastaliq — self-hosted Persian Nastaliq font */
+@font-face {
+  font-family: "IranNastaliq";
+  src: url("/fonts/IranNastaliq.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ========================================
    IMAN Design System — CSS Custom Properties
    Persian Architectural Materials Palette
@@ -70,13 +79,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Farsi utilities */
+/* Farsi utilities — all Farsi uses IranNastaliq */
 .farsi {
+  font-family: "IranNastaliq", serif;
   direction: rtl;
-  line-height: 1.8;
+  line-height: 2.2;
 }
 
 .nastaliq {
+  font-family: "IranNastaliq", serif;
   direction: rtl;
   line-height: 2.2;
 }

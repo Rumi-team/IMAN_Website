@@ -82,7 +82,7 @@ export default function DonatePage() {
                   {stat.label}
                 </div>
                 <div
-                  className="font-[family-name:var(--font-farsi)] text-xs text-[var(--gold)]"
+                  className="font-[IranNastaliq] text-xs text-[var(--gold)]"
                   dir="rtl"
                   lang="fa"
                 >
@@ -100,7 +100,7 @@ export default function DonatePage() {
                 Make a Difference Today
               </h3>
               <p
-                className="font-[family-name:var(--font-farsi)] text-lg text-[var(--gold)] mb-6"
+                className="font-[IranNastaliq] text-lg text-[var(--gold)] mb-6"
                 dir="rtl"
                 lang="fa"
               >
@@ -142,7 +142,7 @@ export default function DonatePage() {
                   {item.en}
                 </h3>
                 <p
-                  className="font-[family-name:var(--font-farsi)] text-sm text-[var(--gold)] mb-3"
+                  className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-3"
                   dir="rtl"
                   lang="fa"
                 >
