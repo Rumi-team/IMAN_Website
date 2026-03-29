@@ -3,6 +3,7 @@ import {
   Cormorant_Garamond,
   Source_Sans_3,
 } from "next/font/google";
+import DailyWisdom from "@/components/DailyWisdom";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -96,6 +97,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-to-content">
           Skip to content
         </a>
+        <DailyWisdom />
         <main id="main-content">{children}</main>
       </body>
     </html>
