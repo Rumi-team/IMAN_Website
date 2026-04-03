@@ -381,12 +381,6 @@ export default async function Home() {
                 attend our events and classes, and find your community in Los
                 Angeles. We are here to support, connect, and grow together.
               </p>
-              <a
-                href="#"
-                className="inline-block bg-[var(--gold)] text-[var(--text)] px-8 py-3 rounded text-sm font-semibold tracking-wide hover:bg-[var(--gold-light)] transition-colors"
-              >
-                Become a Member
-              </a>
             </div>
 
             <div className="grid grid-cols-2 gap-5">
