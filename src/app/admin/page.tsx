@@ -197,7 +197,7 @@ export default function AdminPage() {
           </h2>
           <p className="text-sm text-[var(--text-secondary)] mb-6">
             Upload the monthly prayer times image (like the Ramadan schedule).
-            Gemini AI will extract prayer times, events, and translate Farsi
+            Rumi AI will extract prayer times, events, and translate Farsi
             content automatically.
           </p>
 
@@ -220,7 +220,7 @@ export default function AdminPage() {
                 disabled={uploading}
                 className="bg-[var(--gold)] text-white px-6 py-2 rounded font-semibold text-sm hover:bg-[var(--gold-light)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {uploading ? "Extracting with Gemini AI..." : "Extract Data"}
+                {uploading ? "Extracting with Rumi AI..." : "Extract Data"}
               </button>
             </div>
 
