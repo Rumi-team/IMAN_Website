@@ -320,7 +320,7 @@ export default async function Home() {
           <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="relative aspect-square max-w-[500px] mx-auto lg:mx-0">
               <Image
-                src="/iran-map.jpg"
+                src="/iran-map.png"
                 alt="Illustrated map of Iran showing historic landmarks and mosques"
                 fill
                 sizes="500px"
