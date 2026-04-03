@@ -39,8 +39,8 @@ export default function Navbar() {
           <Image
             src="/iman-logo.jpg"
             alt="IMAN Logo"
-            width={40}
-            height={40}
+            width={120}
+            height={120}
             className="rounded"
           />
           <span className="font-[family-name:var(--font-display)] text-xl font-medium tracking-widest text-[var(--text)]">
