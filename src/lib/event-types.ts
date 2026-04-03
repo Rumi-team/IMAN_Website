@@ -1,16 +1,14 @@
-export const EVENT_TYPES = ["special", "celebration", "recurring"] as const;
+export const EVENT_TYPES = ["special", "recurring"] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 
 export const TYPE_COLORS: Record<string, string> = {
   special: "bg-[var(--lapis)]",
-  celebration: "bg-[var(--gold)]",
   recurring: "bg-[var(--accent)]",
 };
 
 /** Badge text colors for admin UI */
 export const TYPE_BADGE_COLORS: Record<string, string> = {
   special: "bg-[var(--lapis)]/10 text-[var(--lapis)]",
-  celebration: "bg-[var(--gold)]/10 text-[var(--gold)]",
   recurring: "bg-[var(--muted)]/10 text-[var(--muted)]",
 };
 

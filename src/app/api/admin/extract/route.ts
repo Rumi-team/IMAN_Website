@@ -24,7 +24,7 @@ Extract ALL data into this exact JSON format:
       "day": 1,
       "eventFa": "original Farsi text of the event",
       "eventEn": "English translation of the event",
-      "type": "special|celebration|recurring"
+      "type": "special|recurring"
     }
   ],
   "prayerTimes": [
@@ -48,11 +48,9 @@ Rules:
 - "اول فروردین" = "Nowruz (Persian New Year)", "عید فطر" = "Eid al-Fitr"
 - Keep times in 24-hour format as shown in the image
 - Include ALL days of the month, even those without events
-- Event type classification (3 types):
-  - "special": one-time events, holidays, martyrdoms, lectures. Includes: شهادت (Martyrdom of Imam), عید (Eid), نوروز (Nowruz), فروردین (12 Farvardin), lectures, community gatherings. Examples: Martyrdom of Imam Ja'far Sadiq, Eid al-Fitr, Lecture by Eng. Bazargan, 12 Farvardin
-  - "celebration": joyful milestones — birthdays and commemorations ONLY. Includes: ولادت (Birthday of Imam), بزرگداشت (Commemoration). Examples: Birthday of Imam Reza (AS), Commemoration of Sa'di - Day of Persian Prose
+- Event type classification (2 types):
+  - "special": any event that is NOT weekly recurring. Includes: ولادت (Birthday of Imam), شهادت (Martyrdom of Imam), بزرگداشت (Commemoration), عید (Eid), نوروز (Nowruz), فروردین (12 Farvardin), lectures, community gatherings
   - "recurring": weekly events that repeat every week. Includes: دعای کمیل (Dua Kumayl), نماز جمعه (Jumu'ah Prayer), کلاس قرآن (Quran Class)
-- IMPORTANT: شهادت (Martyrdom) is NOT a celebration — always classify as "special"
 - Return ONLY valid JSON, no markdown, no explanation`;
 
 export async function POST(req: NextRequest) {
