@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import DarkModeToggle from "./DarkModeToggle";
 
 const navItems = [
@@ -33,12 +34,18 @@ export default function Navbar() {
 
   return (
     <nav className="flex items-center justify-between px-6 lg:px-10 py-4 border-b border-[var(--line-light)] bg-[var(--surface)]">
-      <div className="flex items-baseline gap-3">
-        <Link
-          href="/"
-          className="font-[family-name:var(--font-display)] text-xl font-medium tracking-widest text-[var(--text)]"
-        >
-          IMAN
+      <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/iman-logo.jpg"
+            alt="IMAN Logo"
+            width={40}
+            height={40}
+            className="rounded"
+          />
+          <span className="font-[family-name:var(--font-display)] text-xl font-medium tracking-widest text-[var(--text)]">
+            IMAN
+          </span>
         </Link>
         <span
           className="font-[IranNastaliq] text-base text-[var(--gold)]"
