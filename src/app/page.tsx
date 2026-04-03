@@ -134,9 +134,6 @@ export default async function Home() {
                 </a>
               </div>
             </div>
-
-            {/* Prayer Card */}
-            <PrayerCard prayers={prayers} date={date} />
           </div>
         </div>
       </section>
