@@ -94,45 +94,42 @@ export default async function Home() {
       <section className="relative overflow-hidden min-h-[600px]">
         <div className="girih-pattern" />
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-16 lg:py-24 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 lg:gap-16 items-center">
-            {/* Text */}
-            <div>
-              <p
-                className="font-[IranNastaliq] text-xl text-[var(--gold)] opacity-85 mb-4"
-                dir="rtl"
+          <div className="flex flex-col items-center text-center">
+            <p
+              className="font-[IranNastaliq] text-xl text-[var(--gold)] opacity-85 mb-4"
+              dir="rtl"
+            >
+              بسم الله الرحمن الرحیم
+            </p>
+            <h1 className="font-[family-name:var(--font-display)] text-4xl lg:text-6xl font-normal leading-[1.15] text-[var(--text)] mb-4">
+              A Home for <em className="text-[var(--accent)] font-medium">Faith</em>,
+              <br />
+              Culture &amp; Community
+            </h1>
+            <p
+              className="font-[IranNastaliq] text-lg text-[var(--text-secondary)] mb-6"
+              dir="rtl"
+              style={{ lineHeight: 2 }}
+            >
+              خانه‌ای برای ایمان، فرهنگ و اجتماع
+            </p>
+            <p className="text-lg text-[var(--text-secondary)] max-w-[520px] mb-8">
+              Serving the Iranian-American Muslim community in Los Angeles
+              since 1990. Join us for prayer, learning, and celebration.
+            </p>
+            <div className="flex gap-4">
+              <a
+                href="#community"
+                className="inline-block bg-[var(--accent)] text-white px-6 py-3 rounded text-sm font-semibold tracking-wide hover:bg-[var(--accent-hover)] transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                بسم الله الرحمن الرحیم
-              </p>
-              <h1 className="font-[family-name:var(--font-display)] text-4xl lg:text-6xl font-normal leading-[1.15] text-[var(--text)] mb-4">
-                A Home for <em className="text-[var(--accent)] font-medium">Faith</em>,
-                <br />
-                Culture &amp; Community
-              </h1>
-              <p
-                className="font-[IranNastaliq] text-lg text-[var(--text-secondary)] mb-6"
-                dir="rtl"
-                style={{ lineHeight: 2 }}
+                Join Our Community
+              </a>
+              <a
+                href="/about"
+                className="inline-block border-[1.5px] border-[var(--line)] text-[var(--text)] px-6 py-3 rounded text-sm font-semibold tracking-wide hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
               >
-                خانه‌ای برای ایمان، فرهنگ و اجتماع
-              </p>
-              <p className="text-lg text-[var(--text-secondary)] max-w-[520px] mb-8">
-                Serving the Iranian-American Muslim community in Los Angeles
-                since 1990. Join us for prayer, learning, and celebration.
-              </p>
-              <div className="flex gap-4">
-                <a
-                  href="#community"
-                  className="inline-block bg-[var(--accent)] text-white px-6 py-3 rounded text-sm font-semibold tracking-wide hover:bg-[var(--accent-hover)] transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  Join Our Community
-                </a>
-                <a
-                  href="/about"
-                  className="inline-block border-[1.5px] border-[var(--line)] text-[var(--text)] px-6 py-3 rounded text-sm font-semibold tracking-wide hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-                >
-                  Learn More
-                </a>
-              </div>
+                Learn More
+              </a>
             </div>
           </div>
         </div>
