@@ -7,6 +7,8 @@ import GeoDivider from "@/components/GeoDivider";
 import PrayerCard from "@/components/PrayerCard";
 import { fetchDailyPrayers, fetchMonthlyPrayers } from "@/lib/prayer-api";
 import type { MonthlyPrayerDay } from "@/lib/prayer-api";
+import { fetchPublishedMonth } from "@/lib/events";
+import type { PublishedEvent } from "@/lib/events";
 
 export const metadata: Metadata = {
   title: "Prayer Times | IMAN",
@@ -34,10 +36,15 @@ const FARSI_DAYS: Record<string, string> = {
   Sat: "شنبه",
 };
 
-function getEventForDay(dayName: string): string | null {
-  if (dayName === "Thu") return "Dua Kumayl";
-  if (dayName === "Fri") return "Jumu'ah";
-  return null;
+/** Convert "HH:MM" (24h) to "h:MM AM/PM" */
+function to12Hour(time24: string): string {
+  const [hStr, mStr] = time24.split(":");
+  let h = parseInt(hStr, 10);
+  if (isNaN(h)) return time24;
+  const suffix = h >= 12 ? "PM" : "AM";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${mStr} ${suffix}`;
 }
 
 export default async function PrayerTimesPage() {
@@ -48,34 +55,82 @@ export default async function PrayerTimesPage() {
   const currentDay = laDate.getDate();
   const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const [dailyData, monthlyDataRaw] = await Promise.all([
+  const [dailyData, monthlyDataRaw, published] = await Promise.all([
     fetchDailyPrayers(),
     fetchMonthlyPrayers(currentYear, currentMonth).catch(() => [] as MonthlyPrayerDay[]),
+    fetchPublishedMonth(currentYear, currentMonth),
   ]);
 
-  // Transform MonthlyPrayerDay[] into flat rows for the table
-  const monthlyRows = monthlyDataRaw.map((row) => {
-    const dayNum = parseInt(row.day, 10);
-    const dateObj = new Date(currentYear, currentMonth - 1, dayNum);
-    const dayName = DAY_NAMES[dateObj.getDay()];
-
-    // Extract individual prayer times from the prayers array
-    const prayerMap: Record<string, string> = {};
-    for (const p of row.prayers) {
-      prayerMap[p.en] = p.time;
+  // Build event lookup from published data: day -> event names
+  const eventsByDay: Record<number, PublishedEvent[]> = {};
+  if (published?.events) {
+    for (const ev of published.events) {
+      if (!eventsByDay[ev.day]) eventsByDay[ev.day] = [];
+      eventsByDay[ev.day].push(ev);
     }
+  }
 
-    return {
-      day: dayNum,
-      dayName,
-      fajr: prayerMap["Fajr"] ?? "",
-      sunrise: prayerMap["Sunrise"] ?? "",
-      dhuhr: prayerMap["Dhuhr"] ?? "",
-      asr: prayerMap["Asr"] ?? "",
-      maghrib: prayerMap["Maghrib"] ?? "",
-      isha: prayerMap["Isha"] ?? "",
-    };
-  });
+  // Build prayer time lookup from published data: day -> times
+  const publishedTimesByDay: Record<number, { day: number; fajr: string; sunrise: string; dhuhr: string; asr: string; maghrib: string; isha: string }> = {};
+  if (published?.prayerTimes) {
+    for (const pt of published.prayerTimes) {
+      publishedTimesByDay[pt.day] = pt;
+    }
+  }
+  const hasPublishedTimes = Object.keys(publishedTimesByDay).length > 0;
+
+  // If published prayer times exist, use them. Otherwise fall back to Aladhan.
+  let monthlyRows: Array<{
+    day: number;
+    dayName: string;
+    fajr: string;
+    sunrise: string;
+    dhuhr: string;
+    asr: string;
+    maghrib: string;
+    isha: string;
+  }>;
+
+  if (hasPublishedTimes) {
+    // Use admin-uploaded IMAN prayer times
+    const days = Object.keys(publishedTimesByDay).map(Number).sort((a, b) => a - b);
+    monthlyRows = days.map((dayNum) => {
+      const pt = publishedTimesByDay[dayNum];
+      const dateObj = new Date(currentYear, currentMonth - 1, dayNum);
+      const dayName = DAY_NAMES[dateObj.getDay()];
+      return {
+        day: dayNum,
+        dayName,
+        fajr: to12Hour(pt.fajr),
+        sunrise: to12Hour(pt.sunrise),
+        dhuhr: to12Hour(pt.dhuhr),
+        asr: to12Hour(pt.asr),
+        maghrib: to12Hour(pt.maghrib),
+        isha: to12Hour(pt.isha),
+      };
+    });
+  } else {
+    // Fall back to Aladhan API
+    monthlyRows = monthlyDataRaw.map((row) => {
+      const dayNum = parseInt(row.day, 10);
+      const dateObj = new Date(currentYear, currentMonth - 1, dayNum);
+      const dayName = DAY_NAMES[dateObj.getDay()];
+      const prayerMap: Record<string, string> = {};
+      for (const p of row.prayers) {
+        prayerMap[p.en] = p.time;
+      }
+      return {
+        day: dayNum,
+        dayName,
+        fajr: prayerMap["Fajr"] ?? "",
+        sunrise: prayerMap["Sunrise"] ?? "",
+        dhuhr: prayerMap["Dhuhr"] ?? "",
+        asr: prayerMap["Asr"] ?? "",
+        maghrib: prayerMap["Maghrib"] ?? "",
+        isha: prayerMap["Isha"] ?? "",
+      };
+    });
+  }
 
   const today = currentDay;
 
@@ -158,7 +213,7 @@ export default async function PrayerTimesPage() {
                   {monthlyRows.map((row, i) => {
                     const isToday = row.day === today;
                     const isEven = i % 2 === 0;
-                    const event = getEventForDay(row.dayName);
+                    const dayEvents = eventsByDay[row.day] || [];
                     const farsiDay = FARSI_DAYS[row.dayName] || "";
 
                     return (
@@ -206,11 +261,22 @@ export default async function PrayerTimesPage() {
                           {row.isha}
                         </td>
                         <td className="px-3 py-2.5">
-                          {event && (
-                            <span className="text-xs font-medium text-[var(--accent)]">
-                              {event}
-                            </span>
-                          )}
+                          {dayEvents.length > 0 ? (
+                            <div className="space-y-0.5">
+                              {dayEvents.map((ev, j) => (
+                                <span
+                                  key={j}
+                                  className={`block text-xs font-medium ${
+                                    ev.type === "special"
+                                      ? "text-[var(--gold)]"
+                                      : "text-[var(--accent)]"
+                                  }`}
+                                >
+                                  {ev.eventEn}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
                         </td>
                       </tr>
                     );

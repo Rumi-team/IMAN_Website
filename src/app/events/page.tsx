@@ -4,7 +4,13 @@ import Footer from "@/components/Footer";
 import PageHero from "@/components/PageHero";
 import SectionHeader from "@/components/SectionHeader";
 import GeoDivider from "@/components/GeoDivider";
-import PublishedEvents from "@/components/PublishedEvents";
+import { fetchPublishedMonths } from "@/lib/events";
+import type { PublishedEvent } from "@/lib/events";
+import {
+  TYPE_COLORS,
+  CANONICAL_RECURRING,
+  findCanonicalRecurring,
+} from "@/lib/event-types";
 
 export const metadata: Metadata = {
   title: "Events | IMAN",
@@ -20,7 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-const recurring = [
+/** Hardcoded fallback for recurring events when no published data exists */
+const FALLBACK_RECURRING = [
   {
     en: "Dua Kumayl",
     fa: "دعای کمیل",
@@ -37,70 +44,188 @@ const recurring = [
   },
 ];
 
-const specialEvents = [
-  {
-    day: "20",
-    month: "March",
-    title: "Eid al-Fitr Celebration",
-    fa: "عید سعید فطر",
-    time: "Thursday, 9:00 AM - 1:00 PM",
-    desc: "Join us for Eid prayers followed by community breakfast and celebrations for all ages.",
-    color: "bg-[var(--accent)]",
-  },
-  {
-    day: "20",
-    month: "March",
-    title: "Nowruz 1405 Gathering",
-    fa: "نوروز ۱۴۰۵",
-    time: "Saturday, 5:00 PM - 9:00 PM",
-    desc: "Celebrate the Persian New Year with traditional Haft-Sin, music, poetry, and community dinner.",
-    color: "bg-[var(--lapis)]",
-  },
-  {
-    day: "27",
-    month: "May",
-    title: "Eid al-Adha",
-    fa: "عید قربان",
-    time: "Wednesday, 9:00 AM - 1:00 PM",
-    desc: "Celebration of Eid al-Adha with congregational prayers, community feast, and charitable giving. 10 Dhul Hijjah 1447.",
-    color: "bg-[var(--accent)]",
-  },
-  {
-    day: "16",
-    month: "June",
-    title: "Muharram Commemoration",
-    fa: "محرم",
-    time: "Tuesday — Programs throughout the month",
-    desc: "Annual Muharram programs honoring the legacy of Imam Hussain with lectures, majlis, and community gatherings. 1 Muharram 1448.",
-    color: "bg-[var(--cypress)]",
-  },
-  {
-    day: "25",
-    month: "June",
-    title: "Tasu'a & Ashura",
-    fa: "تاسوعا و عاشورا",
-    time: "Thursday & Friday",
-    desc: "Commemoration of the martyrdom of Imam Hussain (AS). Majlis, mourning programs, and community gathering. 9-10 Muharram 1448.",
-    color: "bg-[var(--lapis)]",
-  },
-  {
-    day: "26",
-    month: "July",
-    title: "Arba'een",
-    fa: "اربعین",
-    time: "Sunday — Special program",
-    desc: "The 40th day after the martyrdom of Imam Hussain. Community walk, lectures, and remembrance. 20 Safar 1448.",
-    color: "bg-[var(--cypress)]",
-  },
-];
+interface DeduplicatedRecurring {
+  en: string;
+  fa: string;
+  schedule: string;
+  scheduleFa: string;
+  desc: string;
+}
 
-export default function EventsPage() {
+/** Deduplicate recurring events using canonical name matching */
+function deduplicateRecurring(
+  events: PublishedEvent[]
+): DeduplicatedRecurring[] {
+  const seen = new Set<string>();
+  const result: DeduplicatedRecurring[] = [];
+
+  for (const event of events) {
+    const canonical = findCanonicalRecurring(event.eventEn);
+    const key = canonical ? canonical.key : event.eventEn.toLowerCase();
+
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    if (canonical) {
+      result.push({
+        en: event.eventEn,
+        fa: canonical.fa,
+        schedule: canonical.schedule,
+        scheduleFa: canonical.scheduleFa,
+        desc: canonical.desc,
+      });
+    } else {
+      // Non-canonical recurring event — show with basic info
+      result.push({
+        en: event.eventEn,
+        fa: event.eventFa,
+        schedule: "Weekly",
+        scheduleFa: "هفتگی",
+        desc: "",
+      });
+    }
+  }
+
+  return result;
+}
+
+export default async function EventsPage() {
+  const months = await fetchPublishedMonths();
+
+  // Flatten all events across published months with month context
+  const allEvents: Array<PublishedEvent & { month: string; year: number }> = [];
+  for (const m of months) {
+    for (const e of m.events) {
+      allEvents.push({ ...e, month: m.month, year: m.year });
+    }
+  }
+
+  // Split by type (3 categories)
+  const special = allEvents.filter(
+    (e) => e.type === "special" || !["recurring", "celebration", "special"].includes(e.type)
+  );
+  const celebrations = allEvents.filter((e) => e.type === "celebration");
+  const recurringEvents = allEvents.filter((e) => e.type === "recurring");
+  const recurringCards = deduplicateRecurring(recurringEvents);
+
   return (
     <>
       <Navbar />
       <PageHero title="Upcoming Events" titleFa="رویدادهای پیش رو" />
 
-      {/* ===== RECURRING ===== */}
+      {/* ===== 1. SPECIAL EVENTS ===== */}
+      {special.length > 0 && (
+        <section className="py-24">
+          <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+            <SectionHeader
+              overline="From Admin"
+              title="Special Events"
+              titleFa="رویدادهای ویژه"
+            />
+
+            {months.map((m) => {
+              const monthEvents = special.filter(
+                (e) => e.month === m.month && e.year === m.year
+              );
+              if (monthEvents.length === 0) return null;
+
+              return (
+                <div key={`${m.month}-${m.year}`} className="mb-10">
+                  <div className="inline-block bg-[var(--lapis)] text-white px-4 py-1.5 rounded-lg mb-4">
+                    <span className="font-[family-name:var(--font-display)] font-semibold">
+                      {m.month} {m.year}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {monthEvents.map((event, i) => (
+                      <div
+                        key={i}
+                        className="bg-[var(--surface)] border border-[var(--line-light)] rounded-lg overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5"
+                      >
+                        <div
+                          className={`${TYPE_COLORS[event.type] || "bg-[var(--accent)]"} text-white p-3 text-center`}
+                        >
+                          <div className="font-[family-name:var(--font-display)] text-2xl font-semibold leading-none">
+                            {event.day}
+                          </div>
+                          <div className="text-xs font-medium tracking-widest uppercase opacity-90">
+                            {event.month}
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <h4 className="font-[family-name:var(--font-display)] text-base font-medium text-[var(--text)] mb-1">
+                            {event.eventEn}
+                          </h4>
+                          <p
+                            className="font-[IranNastaliq] text-sm text-[var(--gold)]"
+                            dir="rtl"
+                            lang="fa"
+                          >
+                            {event.eventFa}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ===== 2. CELEBRATIONS ===== */}
+      <section className="bg-[var(--surface)] py-24">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+          <SectionHeader
+            overline="Celebrations"
+            title="Celebrations &amp; Commemorations"
+            titleFa="جشن‌ها و بزرگداشت‌ها"
+          />
+          {celebrations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {celebrations.map((event, i) => (
+                <div
+                  key={`${event.month}-${event.day}-${i}`}
+                  className="bg-[var(--bg)] border border-[var(--line-light)] rounded-lg overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5"
+                >
+                  <div
+                    className={`${TYPE_COLORS[event.type] || "bg-[var(--gold)]"} text-white p-4 text-center`}
+                  >
+                    <div className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-none">
+                      {event.day}
+                    </div>
+                    <div className="text-xs font-medium tracking-widest uppercase opacity-90">
+                      {event.month}
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h4 className="font-[family-name:var(--font-display)] text-lg font-medium text-[var(--text)] mb-1">
+                      {event.eventEn}
+                    </h4>
+                    <p
+                      className="font-[IranNastaliq] text-sm text-[var(--gold)]"
+                      dir="rtl"
+                      lang="fa"
+                    >
+                      {event.eventFa}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--text-secondary)]">
+              No celebrations this month.
+            </p>
+          )}
+        </div>
+      </section>
+
+      <GeoDivider />
+
+      {/* ===== 3. RECURRING GATHERINGS ===== */}
       <section className="py-24">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
@@ -109,7 +234,10 @@ export default function EventsPage() {
             titleFa="برنامه‌های هفتگی"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {recurring.map((event) => (
+            {(recurringCards.length > 0
+              ? recurringCards
+              : FALLBACK_RECURRING
+            ).map((event) => (
               <div
                 key={event.en}
                 className="group bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-6 transition-all hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden"
@@ -128,62 +256,11 @@ export default function EventsPage() {
                 <p className="text-xs font-medium text-[var(--accent)] mb-3">
                   {event.schedule}
                 </p>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                  {event.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ADMIN-PUBLISHED MONTHLY EVENTS ===== */}
-      <PublishedEvents />
-
-      <GeoDivider />
-
-      {/* ===== SPECIAL EVENTS ===== */}
-      <section className="bg-[var(--surface)] py-24">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <SectionHeader
-            overline="Special Events"
-            title="Celebrations &amp; Commemorations"
-            titleFa="مراسم ویژه"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {specialEvents.map((event) => (
-              <div
-                key={event.title}
-                className="bg-[var(--bg)] border border-[var(--line-light)] rounded-lg overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5"
-              >
-                <div
-                  className={`${event.color} text-white p-4 text-center`}
-                >
-                  <div className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-none">
-                    {event.day}
-                  </div>
-                  <div className="text-xs font-medium tracking-widest uppercase opacity-90">
-                    {event.month}
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h4 className="font-[family-name:var(--font-display)] text-lg font-medium text-[var(--text)] mb-1">
-                    {event.title}
-                  </h4>
-                  <p
-                    className="font-[IranNastaliq] text-sm text-[var(--gold)] mb-3"
-                    dir="rtl"
-                    lang="fa"
-                  >
-                    {event.fa}
-                  </p>
-                  <p className="text-xs text-[var(--text-secondary)] font-medium">
-                    {event.time}
-                  </p>
-                  <p className="text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">
+                {event.desc && (
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                     {event.desc}
                   </p>
-                </div>
+                )}
               </div>
             ))}
           </div>

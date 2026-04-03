@@ -24,7 +24,7 @@ Extract ALL data into this exact JSON format:
       "day": 1,
       "eventFa": "original Farsi text of the event",
       "eventEn": "English translation of the event",
-      "type": "recurring|special|holiday"
+      "type": "special|celebration|recurring"
     }
   ],
   "prayerTimes": [
@@ -43,11 +43,16 @@ Extract ALL data into this exact JSON format:
 Rules:
 - Translate ALL Farsi event names to English accurately
 - "دعای کمیل" = "Dua Kumayl", "نماز جمعه" = "Jumu'ah Prayer", "کلاس قرآن" = "Quran Class"
+- "کلاس قرآن به زبان انگلیسی" = "Quran Class in English"
 - "شب احیا" = "Night of Revival (Shab-e Ehya)", "ولادت" = "Birthday of", "شهادت" = "Martyrdom of"
 - "اول فروردین" = "Nowruz (Persian New Year)", "عید فطر" = "Eid al-Fitr"
 - Keep times in 24-hour format as shown in the image
 - Include ALL days of the month, even those without events
-- For events, classify: "recurring" (weekly like Dua Kumayl), "special" (one-time), "holiday" (Eid, Nowruz)
+- Event type classification (3 types):
+  - "special": one-time events, holidays, martyrdoms, lectures. Includes: شهادت (Martyrdom of Imam), عید (Eid), نوروز (Nowruz), فروردین (12 Farvardin), lectures, community gatherings. Examples: Martyrdom of Imam Ja'far Sadiq, Eid al-Fitr, Lecture by Eng. Bazargan, 12 Farvardin
+  - "celebration": joyful milestones — birthdays and commemorations ONLY. Includes: ولادت (Birthday of Imam), بزرگداشت (Commemoration). Examples: Birthday of Imam Reza (AS), Commemoration of Sa'di - Day of Persian Prose
+  - "recurring": weekly events that repeat every week. Includes: دعای کمیل (Dua Kumayl), نماز جمعه (Jumu'ah Prayer), کلاس قرآن (Quran Class)
+- IMPORTANT: شهادت (Martyrdom) is NOT a celebration — always classify as "special"
 - Return ONLY valid JSON, no markdown, no explanation`;
 
 export async function POST(req: NextRequest) {

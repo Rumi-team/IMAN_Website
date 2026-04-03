@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put } from "@vercel/blob";
+import { put, list, del } from "@vercel/blob";
+import { EVENT_TYPES } from "@/lib/event-types";
 
 function isAuthed(req: NextRequest): boolean {
   const cookie = req.cookies.get("iman-admin")?.value;
   return !!cookie && cookie === process.env.ADMIN_PASSWORD;
 }
+
+const MONTH_INDEX: Record<string, number> = {
+  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+  july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+};
 
 export async function POST(req: NextRequest) {
   if (!isAuthed(req)) {
@@ -12,7 +18,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { month, year, events } = await req.json();
+    const { month, year, events, prayerTimes } = await req.json();
 
     if (!month || !year || !events) {
       return NextResponse.json(
@@ -21,14 +27,56 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate and normalize event types
+    const validTypes = new Set<string>(EVENT_TYPES);
+    const validatedEvents = events.map((e: { type?: string; [key: string]: unknown }) => ({
+      ...e,
+      type: validTypes.has(e.type ?? "") ? e.type : "special",
+    }));
+
     const filename = `events/${year}-${month.toLowerCase()}.json`;
-    const data = JSON.stringify({ month, year, events, publishedAt: new Date().toISOString() });
+    const data = JSON.stringify({
+      month,
+      year,
+      events: validatedEvents,
+      prayerTimes,
+      publishedAt: new Date().toISOString(),
+    });
 
     const blob = await put(filename, data, {
       access: "public",
       contentType: "application/json",
       addRandomSuffix: false,
+      allowOverwrite: true,
     });
+
+    // Cleanup: delete blobs older than 1 month (keep current + previous)
+    try {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth(); // 0-indexed
+
+      const { blobs } = await list({ prefix: "events/" });
+      for (const b of blobs) {
+        if (b.url === blob.url) continue; // skip the one we just wrote
+
+        // Parse month from blob pathname (events/2026-april.json)
+        const match = b.pathname.match(/events\/(\d+)-(\w+)\.json/);
+        if (!match) continue;
+        const blobYear = parseInt(match[1], 10);
+        const blobMonth = MONTH_INDEX[match[2]];
+        if (blobMonth === undefined) continue;
+
+        // Keep current month and previous month
+        const blobDate = new Date(blobYear, blobMonth);
+        const cutoff = new Date(currentYear, currentMonth - 1); // 1 month ago
+        if (blobDate < cutoff) {
+          await del(b.url);
+        }
+      }
+    } catch {
+      // Cleanup failure is non-fatal
+    }
 
     return NextResponse.json({ success: true, url: blob.url });
   } catch (error) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { EVENT_TYPES, TYPE_BADGE_COLORS } from "@/lib/event-types";
 
 interface ExtractedEvent {
   day: number;
@@ -97,6 +98,7 @@ export default function AdminPage() {
           month: extracted.month,
           year: extracted.year,
           events: extracted.events,
+          prayerTimes: extracted.prayerTimes,
         }),
       });
       const json = await res.json();
@@ -278,17 +280,25 @@ export default function AdminPage() {
                           {event.eventFa}
                         </p>
                       </div>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded ${
-                          event.type === "holiday"
-                            ? "bg-[var(--gold)]/10 text-[var(--gold)]"
-                            : event.type === "special"
-                            ? "bg-[var(--lapis)]/10 text-[var(--lapis)]"
-                            : "bg-[var(--muted)]/10 text-[var(--muted)]"
+                      <select
+                        aria-label="Event type"
+                        value={event.type}
+                        onChange={(e) => {
+                          if (!extracted) return;
+                          const updated = [...extracted.events];
+                          updated[i] = { ...updated[i], type: e.target.value };
+                          setExtracted({ ...extracted, events: updated });
+                        }}
+                        className={`text-xs px-2 py-0.5 rounded min-w-[100px] border-0 cursor-pointer font-medium ${
+                          TYPE_BADGE_COLORS[event.type] || "bg-[var(--muted)]/10 text-[var(--muted)]"
                         }`}
                       >
-                        {event.type}
-                      </span>
+                        {EVENT_TYPES.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   ))}
                 </div>
