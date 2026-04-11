@@ -9,6 +9,7 @@ import { fetchDailyPrayers, fetchMonthlyPrayers } from "@/lib/prayer-api";
 import type { MonthlyPrayerDay } from "@/lib/prayer-api";
 import { fetchPublishedMonth } from "@/lib/events";
 import type { PublishedEvent } from "@/lib/events";
+import { list } from "@vercel/blob";
 
 export const metadata: Metadata = {
   title: "Prayer Times | IMAN",
@@ -55,10 +56,11 @@ export default async function PrayerTimesPage() {
   const currentDay = laDate.getDate();
   const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const [dailyData, monthlyDataRaw, published] = await Promise.all([
+  const [dailyData, monthlyDataRaw, published, scheduleImageUrl] = await Promise.all([
     fetchDailyPrayers(),
     fetchMonthlyPrayers(currentYear, currentMonth).catch(() => [] as MonthlyPrayerDay[]),
     fetchPublishedMonth(currentYear, currentMonth),
+    list({ prefix: "prayer-schedule/" }).then(({ blobs }) => blobs[0]?.url ?? null).catch(() => null),
   ]);
 
   // Build event lookup from published data: day -> event names
@@ -143,7 +145,7 @@ export default async function PrayerTimesPage() {
       />
 
       {/* ===== TODAY ===== */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 flex flex-col items-center">
           <SectionHeader
             overline="Today"
@@ -157,10 +159,45 @@ export default async function PrayerTimesPage() {
         </div>
       </section>
 
+      {/* ===== OFFICIAL SCHEDULE IMAGE ===== */}
+      {scheduleImageUrl && (
+        <>
+          <GeoDivider />
+          <section className="py-16">
+            <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+              <SectionHeader
+                overline="Official Schedule"
+                title="IMAN Prayer Schedule"
+                titleFa="برنامه نماز ایمان"
+              />
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-4 text-center">
+                <p className="text-xs text-[var(--muted)] mb-3">Official schedule provided by IMAN</p>
+                {scheduleImageUrl.endsWith(".pdf") ? (
+                  <a
+                    href={scheduleImageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-[var(--accent)] text-white px-6 py-3 rounded text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+                  >
+                    View Full Schedule PDF &rarr;
+                  </a>
+                ) : (
+                  <img
+                    src={scheduleImageUrl}
+                    alt="IMAN official prayer schedule"
+                    className="max-w-full rounded-lg mx-auto"
+                  />
+                )}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
       <GeoDivider />
 
       {/* ===== MONTHLY CALENDAR ===== */}
-      <section id="monthly-calendar" className="bg-[var(--surface)] py-24 scroll-mt-8">
+      <section id="monthly-calendar" className="bg-[var(--surface)] py-16 scroll-mt-8">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Monthly Calendar"

@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { EVENT_TYPES, TYPE_BADGE_COLORS } from "@/lib/event-types";
+
+interface HeroSlide {
+  imageUrl: string;
+  message: string;
+  messageFa?: string;
+}
 
 interface ExtractedEvent {
   day: number;
@@ -37,6 +43,35 @@ export default function AdminPage() {
   const [extractError, setExtractError] = useState("");
   const [publishError, setPublishError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Hero slides state
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
+  const [heroLoading, setHeroLoading] = useState(false);
+  const [heroUploading, setHeroUploading] = useState(false);
+  const [heroMessage, setHeroMessage] = useState("");
+  const [heroMessageFa, setHeroMessageFa] = useState("");
+  const heroFileRef = useRef<HTMLInputElement>(null);
+
+  // Prayer schedule image state
+  const [prayerImageUrl, setPrayerImageUrl] = useState<string | null>(null);
+  const [prayerImageUploading, setPrayerImageUploading] = useState(false);
+  const prayerImageRef = useRef<HTMLInputElement>(null);
+
+  const loadHeroSlides = useCallback(async () => {
+    setHeroLoading(true);
+    try {
+      const res = await fetch("/api/admin/hero");
+      if (res.ok) {
+        const data = await res.json();
+        setHeroSlides(data.slides || []);
+      }
+    } catch { /* ignore */ }
+    setHeroLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (authed) loadHeroSlides();
+  }, [authed, loadHeroSlides]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -395,6 +430,146 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {/* ===== HERO SLIDES ===== */}
+        <div className="mb-10 mt-10 pt-10 border-t border-[var(--line)]">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-medium text-[var(--text)] mb-2">
+            Hero Slides
+          </h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-6">
+            Upload images for the homepage hero carousel. Each slide rotates every 10 seconds.
+          </p>
+
+          {/* Upload new slide */}
+          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-6 mb-4">
+            <div className="space-y-3">
+              <input
+                ref={heroFileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="text-sm text-[var(--text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[var(--accent)] file:text-white hover:file:bg-[var(--accent-hover)] file:cursor-pointer"
+              />
+              <input
+                type="text"
+                placeholder="Slide message (e.g., Join us for Eid celebration!)"
+                value={heroMessage}
+                onChange={(e) => setHeroMessage(e.target.value)}
+                className="w-full bg-[var(--bg)] border border-[var(--line)] rounded px-4 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Message in Farsi (optional)"
+                value={heroMessageFa}
+                onChange={(e) => setHeroMessageFa(e.target.value)}
+                dir="rtl"
+                className="w-full bg-[var(--bg)] border border-[var(--line)] rounded px-4 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none font-[IranNastaliq]"
+              />
+              <button
+                onClick={async () => {
+                  const file = heroFileRef.current?.files?.[0];
+                  if (!file) return;
+                  setHeroUploading(true);
+                  const fd = new FormData();
+                  fd.append("image", file);
+                  fd.append("message", heroMessage);
+                  if (heroMessageFa) fd.append("messageFa", heroMessageFa);
+                  try {
+                    const res = await fetch("/api/admin/hero", { method: "POST", body: fd });
+                    if (res.ok) {
+                      setHeroMessage("");
+                      setHeroMessageFa("");
+                      if (heroFileRef.current) heroFileRef.current.value = "";
+                      await loadHeroSlides();
+                    }
+                  } catch { /* ignore */ }
+                  setHeroUploading(false);
+                }}
+                disabled={heroUploading}
+                className="bg-[var(--gold)] text-white px-6 py-2 rounded font-semibold text-sm hover:bg-[var(--gold-light)] transition-colors disabled:opacity-50"
+              >
+                {heroUploading ? "Uploading..." : "Add Slide"}
+              </button>
+            </div>
+          </div>
+
+          {/* Current slides */}
+          {heroLoading ? (
+            <p className="text-sm text-[var(--muted)]">Loading slides...</p>
+          ) : heroSlides.length === 0 ? (
+            <p className="text-sm text-[var(--muted)]">No hero slides uploaded yet. The homepage will show the default pattern.</p>
+          ) : (
+            <div className="space-y-3">
+              {heroSlides.map((slide, i) => (
+                <div key={slide.imageUrl} className="flex items-center gap-4 bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-3">
+                  <img src={slide.imageUrl} alt={slide.message || `Slide ${i + 1}`} className="w-24 h-16 object-cover rounded" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text)] truncate">{slide.message || "(no message)"}</p>
+                    {slide.messageFa && <p className="text-xs text-[var(--gold)] font-[IranNastaliq] truncate" dir="rtl">{slide.messageFa}</p>}
+                  </div>
+                  <button
+                    onClick={async () => {
+                      await fetch("/api/admin/hero", {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ imageUrl: slide.imageUrl }),
+                      });
+                      await loadHeroSlides();
+                    }}
+                    className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ===== PRAYER SCHEDULE IMAGE ===== */}
+        <div className="mb-10 pt-10 border-t border-[var(--line)]">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-medium text-[var(--text)] mb-2">
+            Prayer Schedule Image
+          </h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-6">
+            Upload the official IMAN prayer schedule (image or PDF). It will appear on the Prayer Times page.
+          </p>
+
+          <div className="bg-[var(--surface)] border border-[var(--line)] rounded-lg p-6">
+            <div className="flex items-center gap-4">
+              <input
+                ref={prayerImageRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                className="text-sm text-[var(--text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[var(--accent)] file:text-white hover:file:bg-[var(--accent-hover)] file:cursor-pointer"
+              />
+              <button
+                onClick={async () => {
+                  const file = prayerImageRef.current?.files?.[0];
+                  if (!file) return;
+                  setPrayerImageUploading(true);
+                  const fd = new FormData();
+                  fd.append("image", file);
+                  try {
+                    const res = await fetch("/api/admin/prayer-image", { method: "POST", body: fd });
+                    if (res.ok) {
+                      const data = await res.json();
+                      setPrayerImageUrl(data.url);
+                      if (prayerImageRef.current) prayerImageRef.current.value = "";
+                    }
+                  } catch { /* ignore */ }
+                  setPrayerImageUploading(false);
+                }}
+                disabled={prayerImageUploading}
+                className="bg-[var(--gold)] text-white px-6 py-2 rounded font-semibold text-sm hover:bg-[var(--gold-light)] transition-colors disabled:opacity-50"
+              >
+                {prayerImageUploading ? "Uploading..." : "Upload Schedule"}
+              </button>
+            </div>
+            {prayerImageUrl && (
+              <p className="mt-3 text-sm text-[var(--cypress)]">Prayer schedule uploaded successfully.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
