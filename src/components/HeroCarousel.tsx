@@ -69,37 +69,65 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
 
       {/* Content */}
       <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-12 lg:py-16 relative z-10">
-        <div className={`flex flex-col items-center text-center ${hasSlides ? "backdrop-blur-sm bg-black/20 rounded-2xl py-10 px-6" : ""}`}>
+        <div
+          className={`flex flex-col items-center text-center ${hasSlides ? "backdrop-blur-sm bg-black/20 rounded-2xl py-10 px-6" : ""}`}
+          aria-live="polite"
+        >
           <p
             className={`font-[IranNastaliq] text-xl opacity-85 mb-4 ${hasSlides ? "text-[#D4AD5A]" : "text-[var(--gold)]"}`}
             dir="rtl"
           >
             بسم الله الرحمن الرحیم
           </p>
-          <h1
-            className={`font-[family-name:var(--font-display)] text-5xl lg:text-7xl font-normal leading-[1.15] mb-4 ${hasSlides ? "text-white" : "text-[var(--text)]"}`}
-          >
-            A Home for{" "}
-            <em className={`font-medium ${hasSlides ? "text-[#2A9AAF]" : "text-[var(--accent)]"}`}>
-              Faith
-            </em>
-            ,
-            <br />
-            Culture &amp; Community
-          </h1>
-          <p
-            className={`font-[IranNastaliq] text-3xl lg:text-4xl mb-6 ${hasSlides ? "text-white/80" : "text-[var(--text-secondary)]"}`}
-            dir="rtl"
-            style={{ lineHeight: 2 }}
-          >
-            خانه‌ای برای ایمان، فرهنگ و اجتماع
-          </p>
-          <p
-            className={`text-lg max-w-[520px] mb-8 ${hasSlides ? "text-white/90" : "text-[var(--text-secondary)]"}`}
-          >
-            Serving the Iranian-American Muslim community in Los Angeles since
-            1990. Join us for prayer, learning, and celebration.
-          </p>
+
+          {/* Slide 0 (or no slides): static headline. Slide 1+: admin custom message */}
+          {!hasSlides || current === 0 ? (
+            <>
+              <h1
+                className={`font-[family-name:var(--font-display)] text-5xl lg:text-7xl font-normal leading-[1.15] mb-4 ${hasSlides ? "text-white" : "text-[var(--text)]"}`}
+              >
+                A Home for{" "}
+                <em className={`font-medium ${hasSlides ? "text-[#2A9AAF]" : "text-[var(--accent)]"}`}>
+                  Faith
+                </em>
+                ,
+                <br />
+                Culture &amp; Community
+              </h1>
+              <p
+                className={`font-[IranNastaliq] text-3xl lg:text-4xl mb-6 ${hasSlides ? "text-white/80" : "text-[var(--text-secondary)]"}`}
+                dir="rtl"
+                style={{ lineHeight: 2 }}
+              >
+                خانه‌ای برای ایمان، فرهنگ و اجتماع
+              </p>
+              <p
+                className={`text-lg max-w-[520px] mb-8 ${hasSlides ? "text-white/90" : "text-[var(--text-secondary)]"}`}
+              >
+                Serving the Iranian-American Muslim community in Los Angeles since
+                1990. Join us for prayer, learning, and celebration.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="font-[family-name:var(--font-display)] text-5xl lg:text-7xl font-normal leading-[1.15] mb-4 text-white">
+                {slide?.message || "Welcome to IMAN"}
+              </h1>
+              {slide?.messageFa && (
+                <p
+                  className="font-[IranNastaliq] text-3xl lg:text-4xl mb-6 text-white/80"
+                  dir="rtl"
+                  style={{ lineHeight: 2 }}
+                >
+                  {slide.messageFa}
+                </p>
+              )}
+              <p className="text-lg max-w-[520px] mb-8 text-white/90">
+                Join us for prayer, learning, and celebration.
+              </p>
+            </>
+          )}
+
           <div className="flex gap-4">
             <a
               href="#community"
@@ -120,29 +148,6 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
           </div>
         </div>
       </div>
-
-      {/* Slide message overlay */}
-      {slide?.message && (
-        <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 to-transparent px-6 py-6">
-          <div
-            className="max-w-[1200px] mx-auto text-center"
-            aria-live="polite"
-          >
-            <p className="text-white text-lg font-medium line-clamp-2">
-              {slide.message}
-            </p>
-            {slide.messageFa && (
-              <p
-                className="font-[IranNastaliq] text-[#D4AD5A] text-base mt-1"
-                dir="rtl"
-                lang="fa"
-              >
-                {slide.messageFa}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Slide indicators */}
       {slides.length > 1 && (
