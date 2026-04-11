@@ -450,6 +450,7 @@ export default function AdminPage() {
                 ref={heroFileRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
+                multiple
                 className="text-sm text-[var(--text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[var(--accent)] file:text-white hover:file:bg-[var(--accent-hover)] file:cursor-pointer"
               />
               <input
@@ -469,13 +470,14 @@ export default function AdminPage() {
               />
               <button
                 onClick={async () => {
-                  const file = heroFileRef.current?.files?.[0];
-                  if (!file) return;
+                  const files = heroFileRef.current?.files;
+                  if (!files || files.length === 0) return;
                   setHeroUploading(true);
                   setHeroError("");
-                  setHeroSuccess("Uploading image, please wait...");
+                  const count = files.length;
+                  setHeroSuccess(`Uploading ${count} image${count > 1 ? "s" : ""}, please wait...`);
                   const fd = new FormData();
-                  fd.append("image", file);
+                  for (let i = 0; i < files.length; i++) fd.append("image", files[i]);
                   fd.append("message", heroMessage);
                   if (heroMessageFa) fd.append("messageFa", heroMessageFa);
                   try {
@@ -485,7 +487,7 @@ export default function AdminPage() {
                       setHeroMessage("");
                       setHeroMessageFa("");
                       if (heroFileRef.current) heroFileRef.current.value = "";
-                      setHeroSuccess("Slide uploaded successfully!");
+                      setHeroSuccess(`${count} slide${count > 1 ? "s" : ""} uploaded successfully!`);
                       await loadHeroSlides();
                     } else {
                       setHeroSuccess("");
@@ -520,36 +522,98 @@ export default function AdminPage() {
           ) : heroSlides.length === 0 ? (
             <p className="text-sm text-[var(--muted)]">No hero slides uploaded yet. The homepage will show the default pattern.</p>
           ) : (
-            <div className="space-y-3">
-              {heroSlides.map((slide, i) => (
-                <div key={slide.imageUrl} className="flex items-center gap-4 bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-3">
-                  <img src={slide.imageUrl} alt={slide.message || `Slide ${i + 1}`} className="w-24 h-16 object-cover rounded" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text)] truncate">{slide.message || "(no message)"}</p>
-                    {slide.messageFa && <p className="text-xs text-[var(--gold)] font-[IranNastaliq] truncate" dir="rtl">{slide.messageFa}</p>}
+            <>
+              <p className="text-xs text-[var(--muted)] mb-2">
+                {heroSlides.length} slide{heroSlides.length > 1 ? "s" : ""}. Use arrows to reorder, then click Save Order.
+              </p>
+              <div className="space-y-2">
+                {heroSlides.map((slide, i) => (
+                  <div key={slide.imageUrl} className="flex items-center gap-3 bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-3">
+                    <span className="text-xs font-mono text-[var(--muted)] w-5 text-center shrink-0">{i + 1}</span>
+                    <div className="flex flex-col gap-1 shrink-0">
+                      <button
+                        onClick={() => {
+                          if (i === 0) return;
+                          setHeroSlides((prev) => {
+                            const next = [...prev];
+                            [next[i - 1], next[i]] = [next[i], next[i - 1]];
+                            return next;
+                          });
+                        }}
+                        disabled={i === 0}
+                        className="text-[var(--accent)] disabled:text-[var(--line)] text-xs leading-none"
+                        aria-label="Move up"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (i === heroSlides.length - 1) return;
+                          setHeroSlides((prev) => {
+                            const next = [...prev];
+                            [next[i], next[i + 1]] = [next[i + 1], next[i]];
+                            return next;
+                          });
+                        }}
+                        disabled={i === heroSlides.length - 1}
+                        className="text-[var(--accent)] disabled:text-[var(--line)] text-xs leading-none"
+                        aria-label="Move down"
+                      >
+                        ▼
+                      </button>
+                    </div>
+                    <img src={slide.imageUrl} alt={slide.message || `Slide ${i + 1}`} className="w-24 h-16 object-cover rounded shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[var(--text)] truncate">{slide.message || "(no message)"}</p>
+                      {slide.messageFa && <p className="text-xs text-[var(--gold)] font-[IranNastaliq] truncate" dir="rtl">{slide.messageFa}</p>}
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (!confirm("Remove this slide?")) return;
+                        const removedUrl = slide.imageUrl;
+                        setHeroSlides((prev) => prev.filter((s) => s.imageUrl !== removedUrl));
+                        setHeroSuccess("Slide removed.");
+                        fetch("/api/admin/hero", {
+                          method: "DELETE",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ imageUrl: removedUrl }),
+                        }).catch(() => {});
+                      }}
+                      className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
+                    >
+                      Remove
+                    </button>
                   </div>
-                  <button
-                    onClick={async () => {
-                      if (!confirm("Remove this slide?")) return;
-                      const removedUrl = slide.imageUrl;
-                      // Remove from UI immediately
-                      setHeroSlides((prev) => prev.filter((s) => s.imageUrl !== removedUrl));
-                      setHeroSuccess("Slide removed.");
-                      // Delete from backend in background
-                      fetch("/api/admin/hero", {
-                        method: "DELETE",
+                ))}
+              </div>
+              {heroSlides.length > 1 && (
+                <button
+                  onClick={async () => {
+                    setHeroSuccess("Saving order...");
+                    try {
+                      const res = await fetch("/api/admin/hero", {
+                        method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ imageUrl: removedUrl }),
-                      }).catch(() => {});
-                    }}
-                    disabled={heroRemoving === slide.imageUrl}
-                    className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0 disabled:opacity-50"
-                  >
-                    {heroRemoving === slide.imageUrl ? "Removing..." : "Remove"}
-                  </button>
-                </div>
-              ))}
-            </div>
+                        body: JSON.stringify({ slides: heroSlides }),
+                      });
+                      if (res.ok) {
+                        setHeroSuccess("Slide order saved!");
+                      } else {
+                        const data = await res.json();
+                        setHeroError(data.error || "Save order failed");
+                        setHeroSuccess("");
+                      }
+                    } catch {
+                      setHeroError("Network error saving order");
+                      setHeroSuccess("");
+                    }
+                  }}
+                  className="mt-3 bg-[var(--accent)] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+                >
+                  Save Order
+                </button>
+              )}
+            </>
           )}
         </div>
 

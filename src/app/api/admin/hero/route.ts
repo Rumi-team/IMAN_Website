@@ -55,48 +55,70 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const image = formData.get("image") as File | null;
+    const images = formData.getAll("image") as File[];
     const message = formData.get("message") as string | null;
     const messageFa = formData.get("messageFa") as string | null;
 
-    if (!image) {
-      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+    if (images.length === 0) {
+      return NextResponse.json({ error: "No images provided" }, { status: 400 });
     }
 
-    if (!ALLOWED_TYPES.has(image.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Allowed: JPEG, PNG, WebP" },
-        { status: 400 }
-      );
+    for (const image of images) {
+      if (!ALLOWED_TYPES.has(image.type)) {
+        return NextResponse.json(
+          { error: `Invalid file type: ${image.name}. Allowed: JPEG, PNG, WebP` },
+          { status: 400 }
+        );
+      }
+      if (image.size > MAX_SIZE) {
+        return NextResponse.json(
+          { error: `File too large: ${image.name}. Maximum 10MB` },
+          { status: 400 }
+        );
+      }
     }
-
-    if (image.size > MAX_SIZE) {
-      return NextResponse.json(
-        { error: "File too large. Maximum 10MB" },
-        { status: 400 }
-      );
-    }
-
-    const ext = image.type.split("/")[1] === "jpeg" ? "jpg" : image.type.split("/")[1];
-    const filename = `hero/images/${randomUUID()}.${ext}`;
-    const blob = await put(filename, image, {
-      access: "public",
-      contentType: image.type,
-      addRandomSuffix: false,
-    });
 
     const slides = await getSlides();
-    slides.push({
-      imageUrl: blob.url,
-      message: message || "",
-      messageFa: messageFa || undefined,
-    });
+
+    for (const image of images) {
+      const ext = image.type.split("/")[1] === "jpeg" ? "jpg" : image.type.split("/")[1];
+      const filename = `hero/images/${randomUUID()}.${ext}`;
+      const blob = await put(filename, image, {
+        access: "public",
+        contentType: image.type,
+        addRandomSuffix: false,
+      });
+      slides.push({
+        imageUrl: blob.url,
+        message: message || "",
+        messageFa: messageFa || undefined,
+      });
+    }
+
     await saveSlides(slides);
 
-    return NextResponse.json({ success: true, slide: slides[slides.length - 1] });
+    return NextResponse.json({ success: true, count: images.length });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: `Upload failed: ${msg}` }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  if (!isAuthed(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { slides: newOrder } = await req.json() as { slides: HeroSlide[] };
+    if (!Array.isArray(newOrder)) {
+      return NextResponse.json({ error: "Invalid slides array" }, { status: 400 });
+    }
+    await saveSlides(newOrder);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: `Reorder failed: ${msg}` }, { status: 500 });
   }
 }
 
