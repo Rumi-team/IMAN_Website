@@ -88,7 +88,7 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
             Culture &amp; Community
           </h1>
           <p
-            className={`font-[IranNastaliq] text-lg mb-6 ${hasSlides ? "text-white/80" : "text-[var(--text-secondary)]"}`}
+            className={`font-[IranNastaliq] text-3xl lg:text-4xl mb-6 ${hasSlides ? "text-white/80" : "text-[var(--text-secondary)]"}`}
             dir="rtl"
             style={{ lineHeight: 2 }}
           >

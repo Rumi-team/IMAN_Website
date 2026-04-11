@@ -49,6 +49,8 @@ export default function AdminPage() {
   const [heroLoading, setHeroLoading] = useState(false);
   const [heroUploading, setHeroUploading] = useState(false);
   const [heroError, setHeroError] = useState("");
+  const [heroRemoving, setHeroRemoving] = useState<string | null>(null);
+  const [heroSuccess, setHeroSuccess] = useState("");
   const [heroMessage, setHeroMessage] = useState("");
   const [heroMessageFa, setHeroMessageFa] = useState("");
   const heroFileRef = useRef<HTMLInputElement>(null);
@@ -504,6 +506,10 @@ export default function AdminPage() {
             </div>
           </div>
 
+          {heroSuccess && (
+            <p className="text-sm text-[var(--cypress)] font-medium mb-3">{heroSuccess}</p>
+          )}
+
           {/* Current slides */}
           {heroLoading ? (
             <p className="text-sm text-[var(--muted)]">Loading slides...</p>
@@ -521,6 +527,8 @@ export default function AdminPage() {
                   <button
                     onClick={async () => {
                       if (!confirm("Remove this slide?")) return;
+                      setHeroRemoving(slide.imageUrl);
+                      setHeroSuccess("");
                       try {
                         const res = await fetch("/api/admin/hero", {
                           method: "DELETE",
@@ -530,16 +538,19 @@ export default function AdminPage() {
                         if (!res.ok) {
                           const data = await res.json();
                           alert(data.error || "Delete failed");
-                          return;
+                        } else {
+                          setHeroSuccess("Slide removed successfully.");
+                          await loadHeroSlides();
                         }
-                        await loadHeroSlides();
                       } catch (e) {
                         alert(e instanceof Error ? e.message : "Network error");
                       }
+                      setHeroRemoving(null);
                     }}
-                    className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
+                    disabled={heroRemoving === slide.imageUrl}
+                    className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0 disabled:opacity-50"
                   >
-                    Remove
+                    {heroRemoving === slide.imageUrl ? "Removing..." : "Remove"}
                   </button>
                 </div>
               ))}
