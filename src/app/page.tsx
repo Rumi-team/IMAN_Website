@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
