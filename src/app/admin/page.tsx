@@ -527,25 +527,16 @@ export default function AdminPage() {
                   <button
                     onClick={async () => {
                       if (!confirm("Remove this slide?")) return;
-                      setHeroRemoving(slide.imageUrl);
-                      setHeroSuccess("");
-                      try {
-                        const res = await fetch("/api/admin/hero", {
-                          method: "DELETE",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ imageUrl: slide.imageUrl }),
-                        });
-                        if (!res.ok) {
-                          const data = await res.json();
-                          alert(data.error || "Delete failed");
-                        } else {
-                          setHeroSuccess("Slide removed successfully.");
-                          await loadHeroSlides();
-                        }
-                      } catch (e) {
-                        alert(e instanceof Error ? e.message : "Network error");
-                      }
-                      setHeroRemoving(null);
+                      const removedUrl = slide.imageUrl;
+                      // Remove from UI immediately
+                      setHeroSlides((prev) => prev.filter((s) => s.imageUrl !== removedUrl));
+                      setHeroSuccess("Slide removed.");
+                      // Delete from backend in background
+                      fetch("/api/admin/hero", {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ imageUrl: removedUrl }),
+                      }).catch(() => {});
                     }}
                     disabled={heroRemoving === slide.imageUrl}
                     className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0 disabled:opacity-50"
