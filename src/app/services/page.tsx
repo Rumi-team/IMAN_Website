@@ -82,7 +82,7 @@ export default function ServicesPage() {
       <GeoDivider />
 
       {/* ===== SERVICES GRID ===== */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {services.map((service) => (
