@@ -63,7 +63,7 @@ export default function AdminPage() {
   const loadHeroSlides = useCallback(async () => {
     setHeroLoading(true);
     try {
-      const res = await fetch("/api/admin/hero");
+      const res = await fetch("/api/admin/hero?t=" + Date.now(), { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setHeroSlides(data.slides || []);
