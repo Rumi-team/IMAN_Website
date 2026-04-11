@@ -17,7 +17,8 @@ async function getSlides(): Promise<HeroSlide[]> {
   try {
     const { blobs } = await list({ prefix: "hero/slides" });
     if (blobs.length === 0) return [];
-    const res = await fetch(blobs[0].url);
+    const res = await fetch(blobs[0].url, { cache: "no-store" });
+    if (!res.ok) return [];
     return await res.json();
   } catch {
     return [];
@@ -25,11 +26,17 @@ async function getSlides(): Promise<HeroSlide[]> {
 }
 
 async function saveSlides(slides: HeroSlide[]) {
+  // Delete existing blob first to avoid overwrite issues
+  try {
+    const { blobs } = await list({ prefix: "hero/slides" });
+    for (const b of blobs) await del(b.url);
+  } catch {
+    // OK if nothing to delete
+  }
   await put(SLIDES_KEY, JSON.stringify(slides), {
     access: "public",
     contentType: "application/json",
     addRandomSuffix: false,
-    allowOverwrite: true,
   });
 }
 
