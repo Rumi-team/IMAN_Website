@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import PrayerCard from "@/components/PrayerCard";
+import HeroCarousel from "@/components/HeroCarousel";
 import GeoDivider from "@/components/GeoDivider";
 import Footer from "@/components/Footer";
-import DailyWisdom from "@/components/DailyWisdom";
+import WisdomCard from "@/components/WisdomCard";
 import SectionHeader from "@/components/SectionHeader";
 import { fetchDailyPrayers } from "@/lib/prayer-api";
+import { fetchPublishedMonths } from "@/lib/events";
+import { fetchHeroSlides } from "@/lib/hero";
+import type { PublishedEvent } from "@/lib/events";
 
 const videos = [
   { id: "ZW3Q4dUxjSo", title: "Ey Iran — ای ایران", featured: true },
@@ -28,49 +32,37 @@ const services = [
     en: "Weekly Classes",
     fa: "کلاس‌های هفتگی",
     desc: "Quran study, Islamic jurisprudence, and Persian language classes for all ages. Weekly gatherings that strengthen knowledge and community bonds.",
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
   },
   {
     en: "Marriage Services",
     fa: "خدمات ازدواج",
     desc: "Traditional Islamic marriage ceremonies (Aqd) with full cultural observance. Pre-marriage counseling and family guidance available.",
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
   },
   {
     en: "Memorial Services",
     fa: "مراسم یادبود",
     desc: "Compassionate funeral and memorial support following Islamic traditions. Community support for families during difficult times.",
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 3 5 6 5-1 4-3 8-6 12-3-4-5-8-6-12 3 0 5-2 6-5z"/><line x1="12" y1="22" x2="12" y2="19"/></svg>`,
   },
   {
     en: "Dua Kumayl",
     fa: "دعای کمیل",
     desc: "Every Thursday evening, join the community for this beloved supplication. A weekly gathering of spiritual reflection and collective prayer.",
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10c0-4-3.6-7-8-7S2 6 2 10c0 5 8 12 8 12s2-1.8 4-4.5"/><path d="M22 10c0-4-3.6-7-8-7"/></svg>`,
   },
 ];
 
-const events = [
+const EVENT_COLORS = ["bg-[var(--accent)]", "bg-[var(--lapis)]", "bg-[var(--cypress)]"];
+
+const FALLBACK_EVENTS = [
   {
-    day: "20",
-    month: "March",
-    title: "Eid al-Fitr Celebration",
-    fa: "عید سعید فطر",
-    time: "Friday, 9:00 AM - 1:00 PM",
-    desc: "Join us for Eid prayers followed by community breakfast and celebrations for all ages.",
-    color: "bg-[var(--accent)]",
-  },
-  {
-    day: "20",
-    month: "March",
-    title: "Nowruz Gathering",
-    fa: "جشن نوروز ۱۴۰۵",
-    time: "Saturday, 5:00 PM - 9:00 PM",
-    desc: "Celebrate the Persian New Year with traditional Haft-Sin, music, poetry, and community dinner.",
-    color: "bg-[var(--lapis)]",
-  },
-  {
-    day: "03",
-    month: "April",
+    day: "—",
+    month: "",
     title: "Dua Kumayl",
     fa: "دعای کمیل",
-    time: "Thursday, 7:30 PM",
+    time: "Every Thursday, 7:30 PM",
     desc: "Weekly Thursday evening supplication followed by community fellowship.",
     color: "bg-[var(--cypress)]",
   },
@@ -83,66 +75,87 @@ const stats = [
   { number: "2", label: "Languages" },
 ];
 
+function publishedToDisplayEvents(published: PublishedEvent[]) {
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+  const currentDay = now.getDate();
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const currentMonthName = monthNames[now.getMonth()];
+
+  return published
+    .filter((e) => e.day >= currentDay)
+    .slice(0, 3)
+    .map((e, i) => ({
+      day: String(e.day).padStart(2, "0"),
+      month: currentMonthName,
+      title: e.eventEn,
+      fa: e.eventFa,
+      time: "",
+      desc: "",
+      color: EVENT_COLORS[i % EVENT_COLORS.length],
+    }));
+}
+
 export default async function Home() {
-  const { prayers, date } = await fetchDailyPrayers();
+  let prayers: Awaited<ReturnType<typeof fetchDailyPrayers>>["prayers"] = [];
+  let date: Awaited<ReturnType<typeof fetchDailyPrayers>>["date"] = { gregorian: "—", shamsi: "", hijri: "" };
+  try {
+    const data = await fetchDailyPrayers();
+    prayers = data.prayers;
+    date = data.date;
+  } catch {
+    // Prayer API down — render page with empty prayer data
+  }
+
+  let dynamicEvents: ReturnType<typeof publishedToDisplayEvents> = [];
+  try {
+    const months = await fetchPublishedMonths();
+    if (months.length > 0 && months[0].events?.length > 0) {
+      dynamicEvents = publishedToDisplayEvents(months[0].events);
+    }
+  } catch {
+    // Blob fetch failed — use fallback
+  }
+
+  const events = dynamicEvents.length > 0 ? dynamicEvents : FALLBACK_EVENTS;
+
+  let heroSlides: Awaited<ReturnType<typeof fetchHeroSlides>> = [];
+  try {
+    heroSlides = await fetchHeroSlides();
+  } catch {
+    // Blob fetch failed — carousel shows girih fallback
+  }
 
   return (
     <>
       <Navbar />
 
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden min-h-[600px]">
-        <div className="girih-pattern" />
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-16 lg:py-24 relative z-10">
-          <div className="flex flex-col items-center text-center">
-            <p
-              className="font-[IranNastaliq] text-xl text-[var(--gold)] opacity-85 mb-4"
-              dir="rtl"
-            >
-              بسم الله الرحمن الرحیم
-            </p>
-            <h1 className="font-[family-name:var(--font-display)] text-4xl lg:text-6xl font-normal leading-[1.15] text-[var(--text)] mb-4">
-              A Home for <em className="text-[var(--accent)] font-medium">Faith</em>,
-              <br />
-              Culture &amp; Community
-            </h1>
-            <p
-              className="font-[IranNastaliq] text-lg text-[var(--text-secondary)] mb-6"
-              dir="rtl"
-              style={{ lineHeight: 2 }}
-            >
-              خانه‌ای برای ایمان، فرهنگ و اجتماع
-            </p>
-            <p className="text-lg text-[var(--text-secondary)] max-w-[520px] mb-8">
-              Serving the Iranian-American Muslim community in Los Angeles
-              since 1990. Join us for prayer, learning, and celebration.
-            </p>
-            <div className="flex gap-4">
-              <a
-                href="#community"
-                className="inline-block bg-[var(--accent)] text-white px-6 py-3 rounded text-sm font-semibold tracking-wide hover:bg-[var(--accent-hover)] transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Join Our Community
-              </a>
-              <a
-                href="/about"
-                className="inline-block border-[1.5px] border-[var(--line)] text-[var(--text)] px-6 py-3 rounded text-sm font-semibold tracking-wide hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-              >
-                Learn More
-              </a>
-            </div>
+      <HeroCarousel slides={heroSlides} />
+
+      {/* ===== PRAYER TIMES + DAILY WISDOM ===== */}
+      <section className="py-16">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {prayers.length > 0 ? (
+              <PrayerCard prayers={prayers} date={date} />
+            ) : (
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-xl p-6 shadow-lg flex items-center justify-center text-[var(--text-secondary)]">
+                Prayer times temporarily unavailable
+              </div>
+            )}
+            <WisdomCard />
           </div>
         </div>
       </section>
 
       {/* ===== SERVICES ===== */}
-      <section className="bg-[var(--surface)] py-24">
+      <section className="bg-[var(--surface)] py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <div className="mb-12">
+          <div className="mb-8">
             <p className="text-xs font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">
               Our Services
             </p>
-            <h2 className="font-[family-name:var(--font-display)] text-3xl lg:text-4xl font-normal text-[var(--text)] mb-2">
+            <h2 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--text)] mb-2">
               Serving the Community
             </h2>
             <p
@@ -160,7 +173,8 @@ export default async function Home() {
                 className="group bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-6 transition-all hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden"
               >
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--accent)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                <h3 className="font-[family-name:var(--font-display)] text-xl font-medium text-[var(--text)] mb-1">
+                <h3 className="font-[family-name:var(--font-display)] text-xl font-medium text-[var(--text)] mb-1 flex items-center gap-2">
+                  <span className="text-[var(--accent)] shrink-0" dangerouslySetInnerHTML={{ __html: service.icon }} />
                   {service.en}
                 </h3>
                 <p
@@ -187,13 +201,13 @@ export default async function Home() {
       <GeoDivider />
 
       {/* ===== EVENTS ===== */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <div className="mb-12">
+          <div className="mb-8">
             <p className="text-xs font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">
               Upcoming Events
             </p>
-            <h2 className="font-[family-name:var(--font-display)] text-3xl lg:text-4xl font-normal text-[var(--text)] mb-2">
+            <h2 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--text)] mb-2">
               What&apos;s Happening at IMAN
             </h2>
             <p
@@ -244,7 +258,7 @@ export default async function Home() {
       </section>
 
       {/* ===== VIDEOS ===== */}
-      <section className="bg-[var(--surface)] py-24">
+      <section className="bg-[var(--surface)] py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Watch"
@@ -292,7 +306,7 @@ export default async function Home() {
       <GeoDivider />
 
       {/* ===== GALLERY ===== */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Gallery"
@@ -360,7 +374,7 @@ export default async function Home() {
       {/* ===== COMMUNITY CTA ===== */}
       <section
         id="community"
-        className="bg-[var(--text)] text-[var(--bg)] py-24 relative overflow-hidden"
+        className="bg-[var(--text)] text-[var(--bg)] py-16 relative overflow-hidden"
       >
         <div className="girih-pattern" />
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 relative z-10">
@@ -373,7 +387,7 @@ export default async function Home() {
               >
                 درهای ما همیشه باز است
               </p>
-              <h2 className="font-[family-name:var(--font-display)] text-3xl lg:text-4xl font-normal text-[var(--bg)] mb-4">
+              <h2 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--bg)] mb-4">
                 Join the IMAN Community
               </h2>
               <p className="text-[var(--surface-2)] leading-relaxed mb-8">
@@ -401,8 +415,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      <DailyWisdom />
 
       <Footer />
     </>
