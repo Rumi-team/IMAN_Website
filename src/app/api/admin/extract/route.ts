@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-function isAuthed(req: NextRequest): boolean {
-  const cookie = req.cookies.get("iman-admin")?.value;
-  return !!cookie && cookie === process.env.ADMIN_PASSWORD;
-}
+import { isAuthed } from "@/lib/admin-auth";
 
 const EXTRACTION_PROMPT = `You are analyzing a monthly prayer times schedule image from IMAN (Iranian-American Muslim Association) in Los Angeles.
 
