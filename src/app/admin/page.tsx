@@ -48,6 +48,7 @@ export default function AdminPage() {
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [heroLoading, setHeroLoading] = useState(false);
   const [heroUploading, setHeroUploading] = useState(false);
+  const [heroError, setHeroError] = useState("");
   const [heroMessage, setHeroMessage] = useState("");
   const [heroMessageFa, setHeroMessageFa] = useState("");
   const heroFileRef = useRef<HTMLInputElement>(null);
@@ -469,19 +470,25 @@ export default function AdminPage() {
                   const file = heroFileRef.current?.files?.[0];
                   if (!file) return;
                   setHeroUploading(true);
+                  setHeroError("");
                   const fd = new FormData();
                   fd.append("image", file);
                   fd.append("message", heroMessage);
                   if (heroMessageFa) fd.append("messageFa", heroMessageFa);
                   try {
                     const res = await fetch("/api/admin/hero", { method: "POST", body: fd });
+                    const data = await res.json();
                     if (res.ok) {
                       setHeroMessage("");
                       setHeroMessageFa("");
                       if (heroFileRef.current) heroFileRef.current.value = "";
                       await loadHeroSlides();
+                    } else {
+                      setHeroError(data.error || `Upload failed (${res.status})`);
                     }
-                  } catch { /* ignore */ }
+                  } catch (e) {
+                    setHeroError(e instanceof Error ? e.message : "Network error");
+                  }
                   setHeroUploading(false);
                 }}
                 disabled={heroUploading}
@@ -489,6 +496,11 @@ export default function AdminPage() {
               >
                 {heroUploading ? "Uploading..." : "Add Slide"}
               </button>
+              {heroError && (
+                <div className="bg-red-50 border border-red-200 rounded px-4 py-3 text-sm text-red-700">
+                  {heroError}
+                </div>
+              )}
             </div>
           </div>
 
@@ -551,12 +563,16 @@ export default function AdminPage() {
                   fd.append("image", file);
                   try {
                     const res = await fetch("/api/admin/prayer-image", { method: "POST", body: fd });
+                    const data = await res.json();
                     if (res.ok) {
-                      const data = await res.json();
                       setPrayerImageUrl(data.url);
                       if (prayerImageRef.current) prayerImageRef.current.value = "";
+                    } else {
+                      alert(data.error || "Upload failed");
                     }
-                  } catch { /* ignore */ }
+                  } catch (e) {
+                    alert(e instanceof Error ? e.message : "Network error");
+                  }
                   setPrayerImageUploading(false);
                 }}
                 disabled={prayerImageUploading}
