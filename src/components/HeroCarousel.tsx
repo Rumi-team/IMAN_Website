@@ -69,7 +69,7 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
 
       {/* Content */}
       <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-12 lg:py-16 relative z-10">
-        <div className="flex flex-col items-center text-center">
+        <div className={`flex flex-col items-center text-center ${hasSlides ? "backdrop-blur-sm bg-black/20 rounded-2xl py-10 px-6" : ""}`}>
           <p
             className={`font-[IranNastaliq] text-xl opacity-85 mb-4 ${hasSlides ? "text-[#D4AD5A]" : "text-[var(--gold)]"}`}
             dir="rtl"
