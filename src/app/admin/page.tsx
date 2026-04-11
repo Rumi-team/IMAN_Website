@@ -473,6 +473,7 @@ export default function AdminPage() {
                   if (!file) return;
                   setHeroUploading(true);
                   setHeroError("");
+                  setHeroSuccess("Uploading image, please wait...");
                   const fd = new FormData();
                   fd.append("image", file);
                   fd.append("message", heroMessage);
@@ -484,11 +485,14 @@ export default function AdminPage() {
                       setHeroMessage("");
                       setHeroMessageFa("");
                       if (heroFileRef.current) heroFileRef.current.value = "";
+                      setHeroSuccess("Slide uploaded successfully!");
                       await loadHeroSlides();
                     } else {
+                      setHeroSuccess("");
                       setHeroError(data.error || `Upload failed (${res.status})`);
                     }
                   } catch (e) {
+                    setHeroSuccess("");
                     setHeroError(e instanceof Error ? e.message : "Network error");
                   }
                   setHeroUploading(false);
