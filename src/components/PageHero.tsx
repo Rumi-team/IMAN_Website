@@ -6,7 +6,7 @@ interface PageHeroProps {
 
 export default function PageHero({ title, titleFa, description }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden py-16 lg:py-24">
+    <section className="relative overflow-hidden py-12 lg:py-16">
       <div className="girih-pattern" />
       <div className="max-w-[1200px] mx-auto px-6 lg:px-10 relative z-10 text-center">
         <h1 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--text)] mb-3">

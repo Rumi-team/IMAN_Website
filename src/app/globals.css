@@ -16,9 +16,9 @@
 
 @theme {
   /* Colors — Light Mode */
-  --color-bg: #F4EDE4;
-  --color-surface: #FFF9EF;
-  --color-surface-2: #E7DCC7;
+  --color-bg: #FAF6F0;
+  --color-surface: #FEFCF8;
+  --color-surface-2: #F0E8D8;
   --color-text: #1E2A30;
   --color-text-secondary: #5A6368;
   --color-muted: #8B9196;
@@ -35,9 +35,9 @@
 }
 
 :root {
-  --bg: #F4EDE4;
-  --surface: #FFF9EF;
-  --surface-2: #E7DCC7;
+  --bg: #FAF6F0;
+  --surface: #FEFCF8;
+  --surface-2: #F0E8D8;
   --text: #1E2A30;
   --text-secondary: #5A6368;
   --muted: #8B9196;

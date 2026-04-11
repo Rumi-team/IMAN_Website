@@ -25,7 +25,7 @@ export default function ContactPage() {
       <PageHero title="Contact Us" titleFa="تماس با ما" />
 
       {/* ===== CONTACT SECTION ===== */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Left — Info */}
@@ -204,7 +204,7 @@ export default function ContactPage() {
       <GeoDivider />
 
       {/* ===== MAP ===== */}
-      <section className="bg-[var(--surface)] py-24">
+      <section className="bg-[var(--surface)] py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="rounded-lg overflow-hidden">
             <iframe

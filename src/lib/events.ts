@@ -1,4 +1,5 @@
 import { list } from "@vercel/blob";
+import { MONTH_INDEX } from "@/lib/months";
 
 export interface PublishedEvent {
   day: number;
@@ -25,11 +26,6 @@ export interface PublishedMonth {
   publishedAt?: string;
 }
 
-const MONTH_INDEX: Record<string, number> = {
-  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
-  july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
-};
-
 /** Fetch all published months (current + future only) */
 export async function fetchPublishedMonths(): Promise<PublishedMonth[]> {
   try {
@@ -39,25 +35,24 @@ export async function fetchPublishedMonths(): Promise<PublishedMonth[]> {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth(); // 0-indexed
 
-    const allMonths: PublishedMonth[] = [];
+    const results = await Promise.all(
+      blobs.map(async (blob) => {
+        try {
+          const res = await fetch(blob.url);
+          const data = await res.json();
+          const mi = MONTH_INDEX[data.month?.toLowerCase()];
 
-    for (const blob of blobs) {
-      try {
-        const res = await fetch(blob.url);
-        const data = await res.json();
-        const mi = MONTH_INDEX[data.month?.toLowerCase()];
+          if (data.year < currentYear) return null;
+          if (data.year === currentYear && mi !== undefined && mi < currentMonth) return null;
 
-        // Skip past months
-        if (data.year < currentYear) continue;
-        if (data.year === currentYear && mi !== undefined && mi < currentMonth) continue;
+          return data as PublishedMonth;
+        } catch {
+          return null;
+        }
+      })
+    );
 
-        allMonths.push(data);
-      } catch {
-        // Skip malformed blobs
-      }
-    }
-
-    return allMonths;
+    return results.filter((m): m is PublishedMonth => m !== null);
   } catch {
     return [];
   }
@@ -68,21 +63,22 @@ export async function fetchPublishedMonth(year: number, month: number): Promise<
   try {
     const { blobs } = await list({ prefix: "events/" });
 
-    for (const blob of blobs) {
-      try {
-        const res = await fetch(blob.url);
-        const data = await res.json();
-        const mi = MONTH_INDEX[data.month?.toLowerCase()];
+    const results = await Promise.all(
+      blobs.map(async (blob) => {
+        try {
+          const res = await fetch(blob.url);
+          const data = await res.json();
+          const mi = MONTH_INDEX[data.month?.toLowerCase()];
 
-        if (data.year === year && mi === month - 1) {
-          return data;
+          if (data.year === year && mi === month - 1) return data as PublishedMonth;
+          return null;
+        } catch {
+          return null;
         }
-      } catch {
-        // Skip malformed blobs
-      }
-    }
+      })
+    );
 
-    return null;
+    return results.find((m): m is PublishedMonth => m !== null) ?? null;
   } catch {
     return null;
   }

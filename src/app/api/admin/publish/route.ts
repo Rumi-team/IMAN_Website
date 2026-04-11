@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put, list, del } from "@vercel/blob";
 import { EVENT_TYPES } from "@/lib/event-types";
-
-function isAuthed(req: NextRequest): boolean {
-  const cookie = req.cookies.get("iman-admin")?.value;
-  return !!cookie && cookie === process.env.ADMIN_PASSWORD;
-}
-
-const MONTH_INDEX: Record<string, number> = {
-  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
-  july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
-};
+import { isAuthed } from "@/lib/admin-auth";
+import { MONTH_INDEX, VALID_MONTHS } from "@/lib/months";
 
 export async function POST(req: NextRequest) {
   if (!isAuthed(req)) {
@@ -23,6 +15,13 @@ export async function POST(req: NextRequest) {
     if (!month || !year || !events) {
       return NextResponse.json(
         { error: "Missing month, year, or events" },
+        { status: 400 }
+      );
+    }
+
+    if (!VALID_MONTHS.has(month.toLowerCase())) {
+      return NextResponse.json(
+        { error: "Invalid month name" },
         { status: 400 }
       );
     }

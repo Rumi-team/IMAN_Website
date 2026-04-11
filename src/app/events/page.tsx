@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/PageHero";
 import SectionHeader from "@/components/SectionHeader";
-import GeoDivider from "@/components/GeoDivider";
 import { fetchPublishedMonths } from "@/lib/events";
 import type { PublishedEvent } from "@/lib/events";
 import {
@@ -100,11 +99,10 @@ export default async function EventsPage() {
     }
   }
 
-  // Split by type (3 categories)
+  // Split by type
   const special = allEvents.filter(
-    (e) => e.type === "special" || !["recurring", "celebration", "special"].includes(e.type)
+    (e) => e.type === "special" || !["recurring", "special"].includes(e.type)
   );
-  const celebrations = allEvents.filter((e) => e.type === "celebration");
   const recurringEvents = allEvents.filter((e) => e.type === "recurring");
   const recurringCards = deduplicateRecurring(recurringEvents);
 
@@ -115,7 +113,7 @@ export default async function EventsPage() {
 
       {/* ===== 1. SPECIAL EVENTS ===== */}
       {special.length > 0 && (
-        <section className="py-24">
+        <section className="py-16">
           <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
             <SectionHeader
               overline="From Admin"
@@ -175,58 +173,8 @@ export default async function EventsPage() {
         </section>
       )}
 
-      {/* ===== 2. CELEBRATIONS ===== */}
-      <section className="bg-[var(--surface)] py-24">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <SectionHeader
-            overline="Celebrations"
-            title="Celebrations &amp; Commemorations"
-            titleFa="جشن‌ها و بزرگداشت‌ها"
-          />
-          {celebrations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {celebrations.map((event, i) => (
-                <div
-                  key={`${event.month}-${event.day}-${i}`}
-                  className="bg-[var(--bg)] border border-[var(--line-light)] rounded-lg overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5"
-                >
-                  <div
-                    className={`${TYPE_COLORS[event.type] || "bg-[var(--gold)]"} text-white p-4 text-center`}
-                  >
-                    <div className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-none">
-                      {event.day}
-                    </div>
-                    <div className="text-xs font-medium tracking-widest uppercase opacity-90">
-                      {event.month}
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h4 className="font-[family-name:var(--font-display)] text-lg font-medium text-[var(--text)] mb-1">
-                      {event.eventEn}
-                    </h4>
-                    <p
-                      className="font-[IranNastaliq] text-sm text-[var(--gold)]"
-                      dir="rtl"
-                      lang="fa"
-                    >
-                      {event.eventFa}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-[var(--text-secondary)]">
-              No celebrations this month.
-            </p>
-          )}
-        </div>
-      </section>
-
-      <GeoDivider />
-
-      {/* ===== 3. RECURRING GATHERINGS ===== */}
-      <section className="py-24">
+      {/* ===== 2. RECURRING GATHERINGS ===== */}
+      <section className="py-16">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Weekly Programs"
