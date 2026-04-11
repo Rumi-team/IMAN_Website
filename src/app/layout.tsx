@@ -20,10 +20,69 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 });
 
+const BASE_URL = "https://iman.org";
+
 export const metadata: Metadata = {
-  title: "IMAN | Iranian-American Muslim Association of North America",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "IMAN | Iranian-American Muslim Association of North America",
+    template: "%s | IMAN",
+  },
   description:
-    "Serving the Iranian-American Muslim community in Los Angeles. Prayer times, events, classes, and community services.",
+    "Serving the Iranian-American Muslim community in Los Angeles since 1990. Prayer times, Quran classes, cultural events, marriage and memorial services at IMAN Center, 3376 Motor Ave.",
+  keywords: [
+    "IMAN",
+    "Iranian-American Muslim Association",
+    "Iranian mosque Los Angeles",
+    "Persian mosque LA",
+    "IMAN Center",
+    "prayer times Los Angeles",
+    "Shia mosque Los Angeles",
+    "Iranian community LA",
+    "Quran classes Los Angeles",
+    "Dua Kumayl",
+    "Jumu'ah prayer",
+    "Islamic center LA",
+    "Nowruz Los Angeles",
+    "Iranian cultural center",
+    "مسجد ایرانیان لس آنجلس",
+    "انجمن اسلامی ایرانیان",
+  ],
+  authors: [{ name: "IMAN - Iranian-American Muslim Association of North America" }],
+  creator: "IMAN",
+  publisher: "IMAN",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+  openGraph: {
+    title: "IMAN | Iranian-American Muslim Association of North America",
+    description:
+      "Serving the Iranian-American Muslim community in Los Angeles since 1990. Prayer times, Quran classes, cultural events, and community services.",
+    url: BASE_URL,
+    siteName: "IMAN",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IMAN | Iranian-American Muslim Association of North America",
+    description:
+      "Serving the Iranian-American Muslim community in Los Angeles since 1990. Prayer times, events, classes, and community services.",
+  },
+  other: {
+    "google-site-verification": "",
+  },
 };
 
 const darkModeScript = `
@@ -41,19 +100,43 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://iman.org/#organization",
+      "@id": `${BASE_URL}/#organization`,
       name: "IMAN - Iranian-American Muslim Association of North America",
-      url: "https://iman.org",
-      logo: "https://iman.org/logo.png",
-      sameAs: [],
+      alternateName: ["IMAN", "IMAN Center", "انجمن اسلامی ایرانیان آمریکای شمالی"],
+      url: BASE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${BASE_URL}/icon.svg`,
+      },
+      description:
+        "Serving the Iranian-American Muslim community in Los Angeles since 1990. Prayer times, Quran classes, cultural events, marriage and memorial services.",
+      foundingDate: "1990",
+      sameAs: [
+        "https://www.instagram.com/imancenter",
+        "https://www.youtube.com/@IMANCenter",
+        "https://www.facebook.com/IMANCulturalCenter/",
+        "https://t.me/IMANCenter",
+        "https://x.com/imaninformation",
+        "https://linkedin.com/company/imancenter",
+        "https://whatsapp.com/channel/0029Va8jQpa29758hnaST632",
+      ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+1-310-202-8181",
+        email: "info@iman.org",
+        contactType: "customer service",
+        availableLanguage: ["English", "Persian"],
+      },
     },
     {
-      "@type": "LocalBusiness",
-      "@id": "https://iman.org/#localbusiness",
+      "@type": ["LocalBusiness", "PlaceOfWorship", "Mosque"],
+      "@id": `${BASE_URL}/#localbusiness`,
       name: "IMAN Center",
-      url: "https://iman.org",
+      url: BASE_URL,
       telephone: "(310) 202-8181",
       email: "info@iman.org",
+      description:
+        "Iranian-American Islamic center in Los Angeles offering daily prayers, Quran classes, cultural events, marriage and memorial services. Bilingual community (English/Farsi).",
       address: {
         "@type": "PostalAddress",
         streetAddress: "3376 Motor Ave",
@@ -62,12 +145,25 @@ const jsonLd = {
         postalCode: "90034",
         addressCountry: "US",
       },
-      openingHours: "Mo-Su 09:00-18:00",
+      openingHours: ["Mo-Su 09:00-18:00"],
       geo: {
         "@type": "GeoCoordinates",
         latitude: 34.0242,
         longitude: -118.3964,
       },
+      priceRange: "Free",
+      currenciesAccepted: "USD",
+      paymentAccepted: "Cash, Credit Card",
+      isAccessibleForFree: true,
+      hasMap: "https://maps.google.com/?q=3376+Motor+Ave+Los+Angeles+CA+90034",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${BASE_URL}/#website`,
+      url: BASE_URL,
+      name: "IMAN",
+      publisher: { "@id": `${BASE_URL}/#organization` },
+      inLanguage: ["en", "fa"],
     },
   ],
 };
