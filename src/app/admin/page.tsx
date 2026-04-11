@@ -520,12 +520,22 @@ export default function AdminPage() {
                   </div>
                   <button
                     onClick={async () => {
-                      await fetch("/api/admin/hero", {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ imageUrl: slide.imageUrl }),
-                      });
-                      await loadHeroSlides();
+                      if (!confirm("Remove this slide?")) return;
+                      try {
+                        const res = await fetch("/api/admin/hero", {
+                          method: "DELETE",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ imageUrl: slide.imageUrl }),
+                        });
+                        if (!res.ok) {
+                          const data = await res.json();
+                          alert(data.error || "Delete failed");
+                          return;
+                        }
+                        await loadHeroSlides();
+                      } catch (e) {
+                        alert(e instanceof Error ? e.message : "Network error");
+                      }
                     }}
                     className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
                   >
