@@ -128,25 +128,24 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const { imageUrl } = await req.json();
+    const { imageUrl, skipSave } = await req.json();
     if (!imageUrl) {
       return NextResponse.json({ error: "Missing imageUrl" }, { status: 400 });
     }
 
-    const slides = await getSlides();
-    const updated = slides.filter((s) => s.imageUrl !== imageUrl);
-
-    if (updated.length === slides.length) {
-      return NextResponse.json({ error: "Slide not found" }, { status: 404 });
-    }
-
+    // Delete the image blob
     try {
       await del(imageUrl);
     } catch {
       // Image may already be deleted
     }
 
-    await saveSlides(updated);
+    // If skipSave, the client already saved the updated list via PUT
+    if (!skipSave) {
+      const slides = await getSlides();
+      const updated = slides.filter((s) => s.imageUrl !== imageUrl);
+      await saveSlides(updated);
+    }
     return NextResponse.json({ success: true, remaining: updated.length });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";

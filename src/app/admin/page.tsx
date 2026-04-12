@@ -571,13 +571,23 @@ export default function AdminPage() {
                       onClick={() => {
                         if (!confirm("Remove this slide?")) return;
                         const removedUrl = slide.imageUrl;
-                        setHeroSlides((prev) => prev.filter((s) => s.imageUrl !== removedUrl));
+                        setHeroSlides((prev) => {
+                          const remaining = prev.filter((s) => s.imageUrl !== removedUrl);
+                          // Save the full remaining list to avoid race conditions
+                          fetch("/api/admin/hero", {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ slides: remaining }),
+                          }).catch(() => {});
+                          // Also delete the image blob in background
+                          fetch("/api/admin/hero", {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ imageUrl: removedUrl, skipSave: true }),
+                          }).catch(() => {});
+                          return remaining;
+                        });
                         setHeroSuccess("Slide removed.");
-                        fetch("/api/admin/hero", {
-                          method: "DELETE",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ imageUrl: removedUrl }),
-                        }).catch(() => {});
                       }}
                       className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
                     >
