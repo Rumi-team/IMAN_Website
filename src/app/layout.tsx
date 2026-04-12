@@ -118,7 +118,6 @@ const jsonLd = {
         "https://t.me/IMANCenter",
         "https://x.com/imaninformation",
         "https://linkedin.com/company/imancenter",
-        "https://whatsapp.com/channel/0029Va8jQpa29758hnaST632",
       ],
       contactPoint: {
         "@type": "ContactPoint",
