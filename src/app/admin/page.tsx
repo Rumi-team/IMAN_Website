@@ -49,7 +49,7 @@ export default function AdminPage() {
   const [heroLoading, setHeroLoading] = useState(false);
   const [heroUploading, setHeroUploading] = useState(false);
   const [heroError, setHeroError] = useState("");
-  const [heroRemoving, setHeroRemoving] = useState<string | null>(null);
+  const [heroSelected, setHeroSelected] = useState<Set<string>>(new Set());
   const [heroSuccess, setHeroSuccess] = useState("");
   const [heroMessage, setHeroMessage] = useState("");
   const [heroMessageFa, setHeroMessageFa] = useState("");
@@ -524,11 +524,24 @@ export default function AdminPage() {
           ) : (
             <>
               <p className="text-xs text-[var(--muted)] mb-2">
-                {heroSlides.length} slide{heroSlides.length > 1 ? "s" : ""}. Use arrows to reorder, then click Save Order.
+                {heroSlides.length} slide{heroSlides.length > 1 ? "s" : ""}. Check slides to remove, use arrows to reorder.
               </p>
               <div className="space-y-2">
                 {heroSlides.map((slide, i) => (
-                  <div key={slide.imageUrl} className="flex items-center gap-3 bg-[var(--surface)] border border-[var(--line-light)] rounded-lg p-3">
+                  <div key={slide.imageUrl} className={`flex items-center gap-3 bg-[var(--surface)] border rounded-lg p-3 ${heroSelected.has(slide.imageUrl) ? "border-[var(--madder)] bg-red-50/30" : "border-[var(--line-light)]"}`}>
+                    <input
+                      type="checkbox"
+                      checked={heroSelected.has(slide.imageUrl)}
+                      onChange={(e) => {
+                        setHeroSelected((prev) => {
+                          const next = new Set(prev);
+                          if (e.target.checked) next.add(slide.imageUrl);
+                          else next.delete(slide.imageUrl);
+                          return next;
+                        });
+                      }}
+                      className="w-4 h-4 shrink-0 accent-[var(--madder)] cursor-pointer"
+                    />
                     <span className="text-xs font-mono text-[var(--muted)] w-5 text-center shrink-0">{i + 1}</span>
                     <div className="flex flex-col gap-1 shrink-0">
                       <button
@@ -567,62 +580,68 @@ export default function AdminPage() {
                       <p className="text-sm font-medium text-[var(--text)] truncate">{slide.message || "(no message)"}</p>
                       {slide.messageFa && <p className="text-xs text-[var(--gold)] font-[IranNastaliq] truncate" dir="rtl">{slide.messageFa}</p>}
                     </div>
-                    <button
-                      onClick={() => {
-                        if (!confirm("Remove this slide?")) return;
-                        const removedUrl = slide.imageUrl;
-                        setHeroSlides((prev) => {
-                          const remaining = prev.filter((s) => s.imageUrl !== removedUrl);
-                          // Save the full remaining list to avoid race conditions
-                          fetch("/api/admin/hero", {
-                            method: "PUT",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ slides: remaining }),
-                          }).catch(() => {});
-                          // Also delete the image blob in background
-                          fetch("/api/admin/hero", {
-                            method: "DELETE",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ imageUrl: removedUrl, skipSave: true }),
-                          }).catch(() => {});
-                          return remaining;
-                        });
-                        setHeroSuccess("Slide removed.");
-                      }}
-                      className="text-xs text-[var(--madder)] font-medium hover:underline shrink-0"
-                    >
-                      Remove
-                    </button>
                   </div>
                 ))}
               </div>
-              {heroSlides.length > 1 && (
-                <button
-                  onClick={async () => {
-                    setHeroSuccess("Saving order...");
-                    try {
-                      const res = await fetch("/api/admin/hero", {
+              <div className="mt-3 flex gap-3">
+                {heroSelected.size > 0 && (
+                  <button
+                    onClick={async () => {
+                      const count = heroSelected.size;
+                      if (!confirm(`Remove ${count} slide${count > 1 ? "s" : ""}?`)) return;
+                      const toRemove = new Set(heroSelected);
+                      const remaining = heroSlides.filter((s) => !toRemove.has(s.imageUrl));
+                      setHeroSlides(remaining);
+                      setHeroSelected(new Set());
+                      setHeroSuccess(`${count} slide${count > 1 ? "s" : ""} removed.`);
+                      // Save remaining list atomically
+                      fetch("/api/admin/hero", {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ slides: heroSlides }),
-                      });
-                      if (res.ok) {
-                        setHeroSuccess("Slide order saved!");
-                      } else {
-                        const data = await res.json();
-                        setHeroError(data.error || "Save order failed");
+                        body: JSON.stringify({ slides: remaining }),
+                      }).catch(() => {});
+                      // Delete image blobs in background
+                      for (const url of toRemove) {
+                        fetch("/api/admin/hero", {
+                          method: "DELETE",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ imageUrl: url, skipSave: true }),
+                        }).catch(() => {});
+                      }
+                    }}
+                    className="bg-[var(--madder)] text-white px-5 py-2 rounded text-sm font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    Remove Selected ({heroSelected.size})
+                  </button>
+                )}
+                {heroSlides.length > 1 && (
+                  <button
+                    onClick={async () => {
+                      setHeroSuccess("Saving order...");
+                      try {
+                        const res = await fetch("/api/admin/hero", {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ slides: heroSlides }),
+                        });
+                        if (res.ok) {
+                          setHeroSuccess("Slide order saved!");
+                        } else {
+                          const data = await res.json();
+                          setHeroError(data.error || "Save order failed");
+                          setHeroSuccess("");
+                        }
+                      } catch {
+                        setHeroError("Network error saving order");
                         setHeroSuccess("");
                       }
-                    } catch {
-                      setHeroError("Network error saving order");
-                      setHeroSuccess("");
-                    }
-                  }}
-                  className="mt-3 bg-[var(--accent)] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors"
-                >
-                  Save Order
-                </button>
-              )}
+                    }}
+                    className="bg-[var(--accent)] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+                  >
+                    Save Order
+                  </button>
+                )}
+              </div>
             </>
           )}
         </div>
