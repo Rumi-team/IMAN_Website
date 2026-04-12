@@ -145,7 +145,7 @@ export default async function PrayerTimesPage() {
       />
 
       {/* ===== TODAY ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 flex flex-col items-center">
           <SectionHeader
             overline="Today"
@@ -181,7 +181,7 @@ export default async function PrayerTimesPage() {
       {scheduleImageUrl && (
         <>
           <GeoDivider />
-          <section className="py-16">
+          <section className="py-12">
             <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
               <SectionHeader
                 overline="Official Schedule"
@@ -215,7 +215,7 @@ export default async function PrayerTimesPage() {
       <GeoDivider />
 
       {/* ===== MONTHLY CALENDAR ===== */}
-      <section id="monthly-calendar" className="bg-[var(--surface)] py-16 scroll-mt-8">
+      <section id="monthly-calendar" className="bg-[var(--surface)] py-12 scroll-mt-8">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Monthly Calendar"

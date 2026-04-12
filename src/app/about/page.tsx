@@ -62,7 +62,7 @@ export default function AboutPage() {
       <PageHero title="About IMAN" titleFa="درباره ایمان" />
 
       {/* ===== MISSION ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Our Mission"
@@ -91,7 +91,7 @@ export default function AboutPage() {
       <GeoDivider />
 
       {/* ===== HISTORY ===== */}
-      <section className="bg-[var(--surface)] py-16">
+      <section className="bg-[var(--surface)] py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Our History"
@@ -131,7 +131,7 @@ export default function AboutPage() {
       <GeoDivider />
 
       {/* ===== VALUES ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Our Values"
@@ -166,7 +166,7 @@ export default function AboutPage() {
       <GeoDivider />
 
       {/* ===== LOCATION ===== */}
-      <section className="bg-[var(--surface)] py-16">
+      <section className="bg-[var(--surface)] py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Visit Us"

@@ -45,7 +45,7 @@ export default function DonatePage() {
       <PageHero title="Support IMAN" titleFa="حمایت از ایمان" />
 
       {/* ===== WHY DONATE ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Your Impact"
@@ -124,7 +124,7 @@ export default function DonatePage() {
       <GeoDivider />
 
       {/* ===== OTHER WAYS ===== */}
-      <section className="bg-[var(--surface)] py-16">
+      <section className="bg-[var(--surface)] py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Get Involved"

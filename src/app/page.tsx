@@ -178,7 +178,7 @@ export default async function Home() {
       <HeroCarousel slides={heroSlides} />
 
       {/* ===== PRAYER TIMES + DAILY WISDOM ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {prayers.length > 0 ? (
@@ -194,7 +194,7 @@ export default async function Home() {
       </section>
 
       {/* ===== SERVICES ===== */}
-      <section className="bg-[var(--surface)] py-16">
+      <section className="bg-[var(--surface)] py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="mb-8">
             <p className="text-xs font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">
@@ -228,12 +228,12 @@ export default async function Home() {
                 >
                   {service.fa}
                 </p>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                <p className="text-base text-[var(--text-secondary)] leading-relaxed">
                   {service.desc}
                 </p>
                 <a
                   href="#"
-                  className="inline-block mt-4 text-xs font-semibold text-[var(--accent)] tracking-wide"
+                  className="inline-block mt-4 text-sm font-semibold text-[var(--accent)] tracking-wide"
                 >
                   Learn More &rarr;
                 </a>
@@ -246,7 +246,7 @@ export default async function Home() {
       <GeoDivider />
 
       {/* ===== EVENTS ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <div className="mb-8">
             <p className="text-xs font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">
@@ -292,7 +292,7 @@ export default async function Home() {
                   <p className="text-xs text-[var(--text-secondary)] font-medium">
                     {event.time}
                   </p>
-                  <p className="text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">
+                  <p className="text-base text-[var(--text-secondary)] mt-2 leading-relaxed">
                     {event.desc}
                   </p>
                 </div>
@@ -302,8 +302,53 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ===== COMMUNITY CTA ===== */}
+      <section
+        id="community"
+        className="bg-[var(--text)] text-[var(--bg)] py-12 relative overflow-hidden"
+      >
+        <div className="girih-pattern" />
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p
+                className="font-[IranNastaliq] text-2xl text-[var(--gold)] mb-6"
+                dir="rtl"
+                style={{ lineHeight: 2.4 }}
+              >
+                درهای ما همیشه باز است
+              </p>
+              <h2 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--bg)] mb-4">
+                Join the IMAN Community
+              </h2>
+              <p className="text-[var(--surface-2)] leading-relaxed mb-8">
+                Our door is always open for new members. Visit our center,
+                attend our events and classes, and find your community in Los
+                Angeles. We are here to support, connect, and grow together.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-5">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="text-center p-6 border border-white/10 rounded-lg"
+                >
+                  <div className="font-[family-name:var(--font-display)] text-4xl font-medium text-[var(--gold)] leading-none mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-sm text-[var(--surface-2)] font-medium">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== VIDEOS ===== */}
-      <section className="bg-[var(--surface)] py-16">
+      <section className="bg-[var(--surface)] py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Watch"
@@ -351,7 +396,7 @@ export default async function Home() {
       <GeoDivider />
 
       {/* ===== GALLERY ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Gallery"
@@ -409,53 +454,6 @@ export default async function Home() {
               >
                 Learn About Our History &rarr;
               </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <GeoDivider />
-
-      {/* ===== COMMUNITY CTA ===== */}
-      <section
-        id="community"
-        className="bg-[var(--text)] text-[var(--bg)] py-16 relative overflow-hidden"
-      >
-        <div className="girih-pattern" />
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <p
-                className="font-[IranNastaliq] text-2xl text-[var(--gold)] mb-6"
-                dir="rtl"
-                style={{ lineHeight: 2.4 }}
-              >
-                درهای ما همیشه باز است
-              </p>
-              <h2 className="font-[family-name:var(--font-display)] text-4xl lg:text-5xl font-normal text-[var(--bg)] mb-4">
-                Join the IMAN Community
-              </h2>
-              <p className="text-[var(--surface-2)] leading-relaxed mb-8">
-                Our door is always open for new members. Visit our center,
-                attend our events and classes, and find your community in Los
-                Angeles. We are here to support, connect, and grow together.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-5">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="text-center p-6 border border-white/10 rounded-lg"
-                >
-                  <div className="font-[family-name:var(--font-display)] text-4xl font-medium text-[var(--gold)] leading-none mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-sm text-[var(--surface-2)] font-medium">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>

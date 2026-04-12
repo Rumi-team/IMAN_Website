@@ -113,7 +113,7 @@ export default async function EventsPage() {
 
       {/* ===== 1. SPECIAL EVENTS ===== */}
       {special.length > 0 && (
-        <section className="py-16">
+        <section className="py-12">
           <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
             <SectionHeader
               overline="From Admin"
@@ -174,7 +174,7 @@ export default async function EventsPage() {
       )}
 
       {/* ===== 2. RECURRING GATHERINGS ===== */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
           <SectionHeader
             overline="Weekly Programs"
