@@ -60,20 +60,6 @@ export default function PrayerCard({ prayers, date, nextPrayer, calendarHref = "
           <span className="text-[var(--text-secondary)]">
             {date.gregorian}
           </span>
-          {date.shamsi && (
-            <span
-              className="block font-[IranNastaliq] text-[var(--gold)] text-xs mt-0.5"
-              dir="rtl"
-              lang="fa"
-            >
-              {date.shamsi}
-            </span>
-          )}
-          {date.hijri && (
-            <span className="block text-[var(--muted)] text-xs mt-0.5">
-              {date.hijri}
-            </span>
-          )}
         </div>
       </div>
 

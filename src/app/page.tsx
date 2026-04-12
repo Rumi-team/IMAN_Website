@@ -9,9 +9,10 @@ import Footer from "@/components/Footer";
 import WisdomCard from "@/components/WisdomCard";
 import SectionHeader from "@/components/SectionHeader";
 import { fetchDailyPrayers } from "@/lib/prayer-api";
-import { fetchPublishedMonths } from "@/lib/events";
+import { fetchPublishedMonths, fetchPublishedMonth } from "@/lib/events";
 import { fetchHeroSlides } from "@/lib/hero";
 import type { PublishedEvent } from "@/lib/events";
+import type { Prayer } from "@/lib/types";
 
 const videos = [
   { id: "ZW3Q4dUxjSo", title: "Ey Iran — ای ایران", featured: true },
@@ -97,15 +98,57 @@ function publishedToDisplayEvents(published: PublishedEvent[]) {
     }));
 }
 
+function to12Hour(time24: string): string {
+  const [hStr, mStr] = time24.split(":");
+  let h = parseInt(hStr, 10);
+  if (isNaN(h)) return time24;
+  const suffix = h >= 12 ? "PM" : "AM";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${mStr} ${suffix}`;
+}
+
 export default async function Home() {
-  let prayers: Awaited<ReturnType<typeof fetchDailyPrayers>>["prayers"] = [];
-  let date: Awaited<ReturnType<typeof fetchDailyPrayers>>["date"] = { gregorian: "—", shamsi: "", hijri: "" };
+  const laDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+  const currentYear = laDate.getFullYear();
+  const currentMonth = laDate.getMonth() + 1;
+  const currentDay = laDate.getDate();
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const dateStr = `${dayNames[laDate.getDay()]}, ${monthNames[currentMonth]} ${currentDay}, ${currentYear}`;
+
+  let prayers: Prayer[] = [];
+  let date = { gregorian: dateStr, shamsi: "", hijri: "" };
+
+  // Try admin-uploaded prayer times first (single source of truth)
   try {
-    const data = await fetchDailyPrayers();
-    prayers = data.prayers;
-    date = data.date;
+    const published = await fetchPublishedMonth(currentYear, currentMonth);
+    if (published?.prayerTimes) {
+      const todayTimes = published.prayerTimes.find((pt) => pt.day === currentDay);
+      if (todayTimes) {
+        prayers = [
+          { en: "Fajr", fa: "اذان صبح", time: to12Hour(todayTimes.fajr) },
+          { en: "Sunrise", fa: "طلوع آفتاب", time: to12Hour(todayTimes.sunrise) },
+          { en: "Dhuhr", fa: "اذان ظهر", time: to12Hour(todayTimes.dhuhr) },
+          { en: "Asr", fa: "نماز عصر", time: to12Hour(todayTimes.asr) },
+          { en: "Maghrib", fa: "اذان مغرب", time: to12Hour(todayTimes.maghrib) },
+          { en: "Isha", fa: "نماز عشا", time: to12Hour(todayTimes.isha) },
+        ];
+      }
+    }
   } catch {
-    // Prayer API down — render page with empty prayer data
+    // Published data unavailable
+  }
+
+  // Fall back to Aladhan API if no admin data
+  if (prayers.length === 0) {
+    try {
+      const data = await fetchDailyPrayers();
+      prayers = data.prayers;
+      date = { gregorian: data.date.gregorian, shamsi: "", hijri: "" };
+    } catch {
+      // Prayer API down too
+    }
   }
 
   let dynamicEvents: ReturnType<typeof publishedToDisplayEvents> = [];

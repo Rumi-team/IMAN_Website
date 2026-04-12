@@ -146,7 +146,7 @@ export async function DELETE(req: NextRequest) {
       const updated = slides.filter((s) => s.imageUrl !== imageUrl);
       await saveSlides(updated);
     }
-    return NextResponse.json({ success: true, remaining: updated.length });
+    return NextResponse.json({ success: true });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: `Delete failed: ${msg}` }, { status: 500 });

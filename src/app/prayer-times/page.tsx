@@ -154,7 +154,25 @@ export default async function PrayerTimesPage() {
             className="text-center"
           />
           <div className="w-full max-w-[480px]">
-            <PrayerCard prayers={dailyData.prayers} date={dailyData.date} calendarHref="#monthly-calendar" />
+            <PrayerCard
+              prayers={
+                hasPublishedTimes && publishedTimesByDay[currentDay]
+                  ? (() => {
+                      const pt = publishedTimesByDay[currentDay];
+                      return [
+                        { en: "Fajr", fa: "اذان صبح", time: to12Hour(pt.fajr) },
+                        { en: "Sunrise", fa: "طلوع آفتاب", time: to12Hour(pt.sunrise) },
+                        { en: "Dhuhr", fa: "اذان ظهر", time: to12Hour(pt.dhuhr) },
+                        { en: "Asr", fa: "نماز عصر", time: to12Hour(pt.asr) },
+                        { en: "Maghrib", fa: "اذان مغرب", time: to12Hour(pt.maghrib) },
+                        { en: "Isha", fa: "نماز عشا", time: to12Hour(pt.isha) },
+                      ];
+                    })()
+                  : dailyData.prayers
+              }
+              date={{ gregorian: dailyData.date.gregorian, shamsi: "", hijri: "" }}
+              calendarHref="#monthly-calendar"
+            />
           </div>
         </div>
       </section>
